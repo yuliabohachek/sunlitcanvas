@@ -1,0 +1,33 @@
+backend:
+  name: github
+  repo: yuliabohachek/sunlitcanvas
+  branch: main
+  base_url: https://cms-oauth.yuliabohachek.workers.dev
+  auth_endpoint: /callback
+
+media_folder: "images"
+public_folder: "images"
+
+collections:
+  - name: "stories"
+    label: "Travel Stories"
+    files:
+      - name: "hong-kong"
+        label: "Hong Kong — Meeting point?"
+        file: "hong-kong.html"
+        fields:
+          - { label: "Cover Tag", name: "cover_tag", widget: "string" }
+          - { label: "Cover Title", name: "cover_title", widget: "string" }
+          - { label: "Cover Subtitle", name: "cover_subtitle", widget: "text" }
+
+  - name: "pages"
+    label: "Pages"
+    files:
+      - name: "index"
+        label: "Home Page"
+        file: "index.html"
+        fields:
+          - { label: "Hero Heading", name: "hero_heading", widget: "string" }
+          - { label: "Hero Body", name: "hero_body", widget: "text" }
+          - { label: "About Quote", name: "about_quote", widget: "text" }
+          - { label: "About Body", name: "about_body", widget: "text" }
