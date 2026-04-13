@@ -1,0 +1,821 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Interactive Map | Sunlit Canvas</title>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Palanquin:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.7.2/css/all.css"/>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --dark:     #3B3030;
+  --accent:   #664343;
+  --accent-lt:#E4E0E1;
+  --white:    #ffff
+  --cream:    #EEE3CB;
+  --mist:     #6b6b6b;
+  --bg-foot:  #F8FBFB;
+  --ubuntu:   'Ubuntu', sans-serif;
+  --body:     'Palanquin', sans-serif;
+}
+
+html, body { height:100%; font-family:var(--ubuntu); color:var(--dark); overflow-x:hidden; }
+
+/* ── NAV (same as main page) ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:1500;
+  padding:16px 16px;
+  background:rgba(255,255,255,0.97);
+  backdrop-filter:blur(10px);
+  box-shadow:0 1px 0 rgba(34,39,37,.08);
+}
+.nav-inner {
+  max-width:1300px; margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-logo img { width:56px; height:56px; display:block; }
+.nav-links { display:flex; gap:0; list-style:none; }
+.nav-links a {
+  font-family:var(--ubuntu); font-size:16px; font-weight:400;
+  color:var(--dark); text-decoration:none; padding:5px 12px;
+  border-radius:25px; display:block; transition:background .2s;
+}
+.nav-links a:hover,
+.nav-links a.active { background:var(--accent-lt); color:var(--accent); }
+.nav-btn {
+  display:flex; align-items:center; gap:10px;
+  background:var(--accent); color:#fff; border:none;
+  padding:10px 24px; border-radius:25px; cursor:pointer;
+  font-family:var(--ubuntu); font-size:16px; font-weight:700;
+  text-decoration:none; transition:box-shadow .2s;
+}
+.nav-btn:hover { box-shadow:5px 5px 0 0 var(--dark); }
+.hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none; }
+.hamburger span { width:24px; height:2px; background:var(--dark); display:block; border-radius:2px; }
+.mobile-nav {
+  display:none; position:fixed; inset:0; z-index:3000;
+  background:#ffffff; flex-direction:column;
+  align-items:center; justify-content:center; gap:1.5rem;
+}
+.mobile-nav.open { display:flex; }
+.mobile-nav a { font-family:var(--ubuntu); font-size:1.8rem; color:var(--dark); text-decoration:none; }
+.mobile-nav a:hover { color:var(--accent); }
+.mobile-close { position:absolute; top:1.5rem; right:1.5rem; font-size:2rem; background:none; border:none; cursor:pointer; color:var(--dark); font-weight:700; }
+
+/* ── PAGE LAYOUT ── */
+.page-wrap {
+  padding-top:88px; /* nav height */
+  display:flex; flex-direction:column;
+  min-height:100vh;
+}
+
+/* ── HERO STRIP ── */
+.map-hero {
+  background:linear-gradient(45deg,#ffffff 46%,#EEE3CB 100%);
+  padding:40px 16px 32px;
+  border-bottom:1px solid rgba(34,39,37,.08);
+}
+.map-hero-inner {
+  max-width:1300px; margin:0 auto;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  flex-wrap:wrap; gap:16px;
+}
+.map-hero-label {
+  font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--mist); margin-bottom:8px;
+  display:flex; align-items:center; gap:10px;
+}
+.map-hero-label::before { content:''; width:28px; height:1px; background:var(--mist); display:block; }
+.map-hero-title {
+  font-family:var(--ubuntu); font-size:36px; font-weight:700;
+  color:var(--dark); line-height:1.1; letter-spacing:-.5px;
+}
+.map-hero-title em { font-style:italic; font-weight:300; color:var(--accent); }
+.map-hero-sub {
+  font-family:var(--body); font-size:16px; color:var(--mist);
+  line-height:1.6; margin-top:8px; max-width:480px;
+}
+.map-counter {
+  display:flex; gap:2rem; align-items:center;
+}
+.map-counter-item { text-align:center; }
+.map-counter-item strong.counting { color:#D741A7!important; }
+.map-counter-item strong.counting { color:#D741A7 !important; }
+.map-counter-item strong {
+  display:block; font-family:var(--ubuntu); font-size:2.4rem;
+  font-weight:700; color:var(--dark); line-height:1;
+}
+.map-counter-item span {
+  font-family:var(--ubuntu); font-size:11px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--mist);
+}
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  background:var(--white);
+  border-bottom:1px solid rgba(34,39,37,.08);
+  padding:12px 16px;
+}
+.filter-inner {
+  max-width:1300px; margin:0 auto;
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  padding:0 16px;
+}
+.filter-label { font-size:13px; color:var(--white); margin-right:4px; }
+.filter-btn {
+  font-family:var(--ubuntu); font-size:13px; font-weight:400;
+  padding:5px 14px; border-radius:25px; cursor:pointer;
+  border:1.5px solid rgba(34,39,37,.2);
+  background:transparent; color:var(--dark);
+  transition:all .2s;
+}
+.filter-btn:hover { border-color:var(--accent); color:var(--dark); }
+.filter-btn.active { background:#664343; color:#fff; border-color:var(--accent); }
+
+/* ── MAP CONTAINER ── */
+#map {
+  flex:1;
+  min-height:calc(100vh - 320px);
+  width:100%;
+  z-index:1;
+}
+
+/* ── CUSTOM MARKER ── */
+.custom-marker {
+  width:36px; height:36px;
+  background:var(--accent);
+  border:3px solid var(--white);
+  border-radius:50% 50% 50% 0;
+  transform:rotate(-45deg);
+  box-shadow:2px 2px 8px rgba(0,0,0,.25);
+  cursor:pointer;
+  transition:transform .2s, background .2s;
+}
+.custom-marker:hover { background:var(--dark); }
+.custom-marker.visited { background:var(--accent); }
+.custom-marker.featured { background:#c9a84c; }
+
+/* ── POPUP STYLES ── */
+.leaflet-popup-content-wrapper {
+  border-radius:4px !important;
+  padding:0 !important;
+  overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,.18) !important;
+  border:none !important;
+  min-width:260px;
+}
+.leaflet-popup-content { margin:0 !important; width:auto !important; }
+.leaflet-popup-tip-container { display:none; }
+.leaflet-popup-close-button {
+  color:var(--white) !important;
+  font-size:18px !important;
+  padding:8px 12px !important;
+  z-index:10;
+}
+
+.popup-wrap { width:280px; font-family:var(--ubuntu); }
+.popup-img {
+  width:100%; height:160px; object-fit:cover; display:block;
+  background:#e8e0d4;
+}
+.popup-img-placeholder {
+  width:100%; height:160px;
+  background:linear-gradient(135deg,#e8e0d4,#EEE3CB);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--mist); font-size:2rem;
+}
+.popup-body { padding:14px 16px 16px; }
+.popup-region {
+  font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:4px;
+}
+.popup-title {
+  font-size:15px; font-weight:700; color:var(--dark);
+  line-height:1.3; margin-bottom:6px;
+}
+.popup-desc {
+  font-family:var(--body); font-size:13px; color:var(--mist);
+  line-height:1.6; margin-bottom:12px;
+}
+.popup-link {
+  display:inline-flex !important; align-items:center; gap:6px;
+  background:#664343 !important; color:#fff !important;
+  padding:7px 16px; border-radius:25px;
+  font-size:12px !important; font-weight:700 !important; letter-spacing:.06em;
+  text-decoration:none !important; transition:box-shadow .2s;
+}
+.popup-link:hover { box-shadow:3px 3px 0 0 #3B3030; color:#fff !important; }
+.popup-no-link {
+  display:inline-flex; align-items:center; gap:6px;
+  border:1.5px solid rgba(34,39,37,.2); color:var(--mist);
+  padding:7px 16px; border-radius:25px;
+  font-size:12px; font-weight:400;
+  font-family:var(--ubuntu);
+}
+
+/* ── FOOTER ── */
+footer {
+  background:var(--bg-foot);
+  padding:30px 16px;
+  border-top:1px solid rgba(34,39,37,.08);
+}
+.footer-bottom {
+  max-width:1300px; margin:0 auto;
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:10px;
+  font-family:var(--ubuntu); font-size:14px; color:#444;
+}
+.footer-bottom a { color:inherit; text-decoration:none; }
+.footer-bottom a:hover { color:var(--accent); }
+.footer-bottom-links { display:flex; gap:20px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:768px) {
+  .nav-links, .nav-btn { display:none; }
+  .hamburger { display:flex; }
+  .nav-mobile-right { display:flex; }
+  .map-hero-title { font-size:26px; }
+  .map-counter { gap:1.2rem; }
+  .map-counter-item strong.counting { color:#D741A7!important; }
+.map-counter-item strong.counting { color:#D741A7 !important; }
+.map-counter-item strong { font-size:1.8rem; }
+  .popup-wrap { width:240px; }
+}
+
+/* ── Mobile nav z-index fix ── */
+nav { z-index:1600 !important; pointer-events:auto !important; }
+.mobile-nav { z-index:3000 !important; background:#ffffff !important; }
+.hamburger { z-index:1700 !important; position:relative !important; cursor:pointer !important; touch-action:manipulation !important; pointer-events:auto !important; -webkit-tap-highlight-color:rgba(0,0,0,0.1) !important; }
+.nav-mobile-right { display:none; align-items:center; gap:10px; z-index:1700 !important; position:relative !important; pointer-events:auto !important; touch-action:manipulation !important; }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="https://res.cloudinary.com/dbyioi2qq/q_auto/v1716326701/static/sunlitcanvaslogosvg_1716326700_53038.svg" alt="Sunlit Canvas">
+    </a>
+    <ul class="nav-links">
+<li><a href="gallery.html">Photo Gallery</a></li>
+      <li><a href="blog.html">Stories & Guides</a></li>
+      <li><a href="#">Shop Prints</a></li>
+    </ul>
+    <a href="map.html" class="nav-btn active"><i class="fas fa-map"></i> Interactive map</a>
+    <div class="nav-mobile-right">
+      <a href="map.html" class="nav-mobile-btn" id="mobileMapBtn"><i class="fas fa-map"></i> Map</a>
+      <button type="button" class="hamburger" id="ham" onclick="document.getElementById('mobileNav').classList.add('open')"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button type="button" class="mobile-close" id="mobileClose" onclick="document.getElementById('mobileNav').classList.remove('open')">✕</button>
+  <a href="gallery.html" onclick="closeMobile()">Photo Gallery</a>
+  <a href="blog.html" onclick="closeMobile()">Stories &amp; Guides</a>
+  <a href="#" onclick="closeMobile()">Shop Prints</a>
+  <a href="map.html" class="nav-btn" onclick="closeMobile()"><i class="fas fa-map"></i> Interactive map</a>
+</div>
+
+<div class="page-wrap">
+
+  <!-- HERO STRIP -->
+  <div class="map-hero">
+    <div class="map-hero-inner">
+      <div>
+        <p class="map-hero-label">My Journey</p>
+        <h1 class="map-hero-title">Every dot has <em>a story</em></h1>
+        <p class="map-hero-sub">Click any marker to read the full story from that destination.</p>
+      </div>
+      <div class="map-counter">
+        <div class="map-counter-item"><strong id="total-places">0</strong><span>Places</span></div>
+        <div class="map-counter-item"><strong id="total-articles">0</strong><span>Articles</span></div>
+        <div class="map-counter-item"><strong id="total-countries">0</strong><span>Countries</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="filter-inner">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="Europe">Europe</button>
+      <button class="filter-btn" data-filter="Asia">Asia</button>
+      <button class="filter-btn" data-filter="Africa">Africa</button>
+      <button class="filter-btn" data-filter="Americas">Americas</button>
+      <button class="filter-btn" data-filter="Oceania">Oceania</button>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div id="map"></div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-bottom">
+      <span>© Copyright 2024, All Rights Reserved — Sunlit Canvas</span>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms &amp; Conditions</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════
+   ТВОИТЕ МЕСТА — редактирай тук
+   
+   За всяко място попълни:
+   · name:    Името на мястото
+   · country: Държавата
+   · region:  Europe / Asia / Africa / Americas / Oceania
+   · lat/lng: Координати (намериги в Google Maps —
+              десен клик върху точката → копирай числата)
+   · img:     URL на снимка (или "" за placeholder)
+   · desc:    Кратко описание (1-2 изречения)
+   · article: URL на статията (или "" ако нямаш още)
+   
+═══════════════════════════════════════════════ */
+const places = [
+  /* ── БЪЛГАРИЯ ── */
+  { name:"Sofia", country:"Bulgaria", region:"Europe", lat:42.6977, lng:23.3219, img:"", desc:"Home — where every journey begins.", article:"" },
+  { name:"Veliko Tarnovo", country:"Bulgaria", region:"Europe", lat:43.0757, lng:25.6172, img:"", desc:"The medieval capital of Bulgaria, built on three hills above the Yantra river.", article:"" },
+  { name:"Belogradchik", country:"Bulgaria", region:"Europe", lat:43.6275, lng:22.6847, img:"", desc:"Extraordinary red rock formations rising above a 19th-century fortress.", article:"" },
+  { name:"Stob Pyramids", country:"Bulgaria", region:"Europe", lat:42.0700, lng:23.1500, img:"", desc:"Natural earth pyramids hidden in the Rila foothills.", article:"" },
+
+  /* ── ИТАЛИЯ ── */
+  { name:"Rome", country:"Italy", region:"Europe", lat:41.9028, lng:12.4964, img:"", desc:"The Eternal City — two thousand years of history in every cobblestone.", article:"" },
+  { name:"Naples", country:"Italy", region:"Europe", lat:40.8518, lng:14.2681, img:"", desc:"Chaotic, beautiful, unrepeatable — the city that invented pizza.", article:"" },
+  { name:"Sorrento", country:"Italy", region:"Europe", lat:40.6263, lng:14.3757, img:"", desc:"Clinging to cliffs above the Bay of Naples, with views across to Vesuvius.", article:"" },
+  { name:"Amalfi", country:"Italy", region:"Europe", lat:40.6340, lng:14.6027, img:"", desc:"A former maritime republic tucked into the cliffs of the Amalfi Coast.", article:"" },
+  { name:"Capri", country:"Italy", region:"Europe", lat:40.5531, lng:14.2420, img:"", desc:"The island of emperors and film stars, emerald grottos and limestone cliffs.", article:"" },
+  { name:"Florence", country:"Italy", region:"Europe", lat:43.7696, lng:11.2558, img:"", desc:"The cradle of the Renaissance — Botticelli, Brunelleschi and the best bistecca.", article:"" },
+  { name:"Bologna", country:"Italy", region:"Europe", lat:44.4949, lng:11.3426, img:"", desc:"La Rossa, La Dotta, La Grassa — red, learned and famously well-fed.", article:"" },
+  { name:"Pisa", country:"Italy", region:"Europe", lat:43.7228, lng:10.4017, img:"", desc:"Beyond the leaning tower lies a quiet, beautiful university city.", article:"" },
+  { name:"Milan", country:"Italy", region:"Europe", lat:45.4642, lng:9.1900, img:"", desc:"Fashion, finance and the finest aperitivo hour in the world.", article:"" },
+  { name:"San Teodoro", country:"Italy", region:"Europe", lat:40.7731, lng:9.6726, img:"", desc:"Sardinia's Costa Smeralda — turquoise water that belongs in the Caribbean.", article:"" },
+  { name:"Olbia", country:"Italy", region:"Europe", lat:40.9232, lng:9.4986, img:"", desc:"The gateway to northern Sardinia and the Costa Smeralda.", article:"" },
+  { name:"Alghero", country:"Italy", region:"Europe", lat:40.5583, lng:8.3194, img:"", desc:"A Catalan city on a Sardinian island — medieval walls, coral and lobster.", article:"" },
+  { name:"Bari", country:"Italy", region:"Europe", lat:41.1177, lng:16.8719, img:"", desc:"Puglia's capital — a port city of ancient trulli and fresh orecchiette.", article:"" },
+  { name:"Bolzano", country:"Italy", region:"Europe", lat:46.4983, lng:11.3548, img:"", desc:"A bilingual Alpine city where Italian and Austrian cultures meet under the Dolomites.", article:"" },
+
+  /* ── ГЪРЦИЯ ── */
+  { name:"Nea Iraklitsa", country:"Greece", region:"Europe", lat:40.8900, lng:24.2800, img:"", desc:"A quiet seaside village on the northern Aegean coast.", article:"" },
+  { name:"Halkidiki", country:"Greece", region:"Europe", lat:40.3167, lng:23.3667, img:"", desc:"Three peninsulas of pine forests and crystal water south of Thessaloniki.", article:"" },
+  { name:"Corfu", country:"Greece", region:"Europe", lat:39.6243, lng:19.9217, img:"", desc:"The greenest of the Greek islands — Venetian architecture and olive groves.", article:"" },
+  { name:"Paxos", country:"Greece", region:"Europe", lat:39.2000, lng:20.1667, img:"", desc:"A tiny island of ancient olive trees and impossibly blue sea caves.", article:"" },
+  { name:"Antipaxos", country:"Greece", region:"Europe", lat:39.1500, lng:20.1833, img:"", desc:"Barely inhabited, with the clearest water in the Ionian Sea.", article:"" },
+  { name:"Igoumenitsa", country:"Greece", region:"Europe", lat:39.5020, lng:20.2656, img:"", desc:"The ferry port of Epirus — gateway between Greece and Italy.", article:"" },
+  { name:"Thessaloniki", country:"Greece", region:"Europe", lat:40.6401, lng:22.9444, img:"", desc:"Greece's second city — Byzantine churches, vibrant food scene and Aristotelous Square.", article:"" },
+  { name:"Kavala", country:"Greece", region:"Europe", lat:40.9395, lng:24.4024, img:"", desc:"A port city of Byzantine aqueducts, tobacco warehouses and a beautiful old town.", article:"" },
+  { name:"Limnos", country:"Greece", region:"Europe", lat:39.9167, lng:25.2333, img:"", desc:"A volcanic island of thermal springs, flamingos and unspoiled Aegean beaches.", article:"" },
+
+  /* ── ИСПАНИЯ — КАНАРСКИ ОСТРОВИ ── */
+  { name:"Gran Canaria", country:"Spain", region:"Europe", lat:27.9202, lng:-15.5474, img:"", desc:"A continent in miniature — volcanic peaks, sand dunes and year-round sunshine.", article:"" },
+  { name:"Maspalomas", country:"Spain", region:"Europe", lat:27.7608, lng:-15.5897, img:"", desc:"The great Saharan dunes of the south — where the island meets the Atlantic.", article:"" },
+
+  /* ── ФРАНЦИЯ ── */
+  { name:"Paris", country:"France", region:"Europe", lat:48.8566, lng:2.3522, img:"", desc:"The city that invented the idea of the city — always worth returning to.", article:"" },
+
+  /* ── ТУРЦИЯ ── */
+  { name:"Istanbul", country:"Turkey", region:"Europe", lat:41.0082, lng:28.9784, img:"", desc:"The city where Europe meets Asia — minarets, bazaars and the Bosphorus at dusk.", article:"" },
+
+  /* ── ГЕРМАНИЯ ── */
+  { name:"Munich", country:"Germany", region:"Europe", lat:48.1351, lng:11.5820, img:"", desc:"Beer gardens, baroque churches and the gateway to the Alps.", article:"" },
+  { name:"Frankfurt", country:"Germany", region:"Europe", lat:50.1109, lng:8.6821, img:"", desc:"Europe's financial hub — glass towers beside a medieval Altstadt.", article:"" },
+  { name:"Düsseldorf", country:"Germany", region:"Europe", lat:51.2217, lng:6.7762, img:"", desc:"Art, fashion and the longest bar in the world along the Rhine.", article:"" },
+
+  /* ── ПОРТУГАЛИЯ ── */
+  { name:"Lisbon", country:"Portugal", region:"Europe", lat:38.7223, lng:-9.1393, img:"", desc:"Tram lines climbing sun-bleached hills, Fado drifting from open windows.", article:"" },
+
+  /* ── МАЛТА ── */
+  { name:"Malta", country:"Malta", region:"Europe", lat:35.9375, lng:14.3754, img:"", desc:"A limestone island of ancient temples, Grand Harbour and the Knights of St John.", article:"" },
+
+  /* ── ГРУЗИЯ ── */
+  { name:"Tbilisi", country:"Georgia", region:"Europe", lat:41.6938, lng:44.8015, img:"", desc:"Sulphur baths, wine in clay jugs and a old town of carved wooden balconies.", article:"" },
+
+  /* ── НИДЕРЛАНДИЯ ── */
+  { name:"Amsterdam", country:"Netherlands", region:"Europe", lat:52.3676, lng:4.9041, img:"", desc:"Canals, bicycles and the golden age of Dutch painting.", article:"" },
+
+  /* ── ВЕЛИКОБРИТАНИЯ ── */
+  { name:"London", country:"UK", region:"Europe", lat:51.5074, lng:-0.1278, img:"", desc:"The Thames, the Tower, the tube — and the best museums in the world, all free.", article:"" },
+
+  /* ── СЛОВАКИЯ ── */
+  { name:"Bratislava", country:"Slovakia", region:"Europe", lat:48.1486, lng:17.1077, img:"", desc:"A compact capital on the Danube — baroque old town and castle above the river.", article:"" },
+
+  /* ── АВСТРИЯ ── */
+  { name:"Vienna", country:"Austria", region:"Europe", lat:48.2082, lng:16.3738, img:"", desc:"Schönbrunn, Sachertorte and the most beautiful concert halls in the world.", article:"" },
+  { name:"Hallstatt", country:"Austria", region:"Europe", lat:47.5622, lng:13.6493, img:"", desc:"A fairy-tale village on a mountain lake — possibly the most photographed in Europe.", article:"" },
+  { name:"Graz", country:"Austria", region:"Europe", lat:47.0707, lng:15.4395, img:"", desc:"Austria's second city — a UNESCO-listed old town of baroque and Renaissance architecture.", article:"" },
+
+  /* ── ХЪРВАТИЯ ── */
+  { name:"Zagreb", country:"Croatia", region:"Europe", lat:45.8150, lng:15.9819, img:"", desc:"A Central European capital of cafe culture, museums and a lively upper town.", article:"" },
+  { name:"Dubrovnik", country:"Croatia", region:"Europe", lat:42.6507, lng:18.0944, img:"", desc:"The Pearl of the Adriatic — limestone walls rising above a sea of impossible blue.", article:"" },
+
+  /* ── ЧЕРНА ГОРА ── */
+  { name:"Podgorica", country:"Montenegro", region:"Europe", lat:42.4304, lng:19.2594, img:"", desc:"The young capital of Montenegro — a city between Ottoman history and the Adriatic.", article:"" },
+  { name:"Budva", country:"Montenegro", region:"Europe", lat:42.2883, lng:18.8400, img:"", desc:"A medieval walled town on the Montenegrin Riviera with the clearest Adriatic water.", article:"" },
+  { name:"Kotor", country:"Montenegro", region:"Europe", lat:42.4247, lng:18.7712, img:"", desc:"A Venetian walled city at the head of Europe's southernmost fjord.", article:"" },
+  { name:"Rožaje", country:"Montenegro", region:"Europe", lat:42.8408, lng:20.1672, img:"", desc:"A mountain town in northeastern Montenegro — gateway to Hajla peak.", article:"" },
+
+  /* ── СЪРБИЯ ── */
+  { name:"Novi Sad", country:"Serbia", region:"Europe", lat:45.2671, lng:19.8335, img:"", desc:"The Athens of Serbia — a Danube city of baroque architecture and EXIT festival.", article:"" },
+
+  /* ── УНГАРИЯ ── */
+  { name:"Budapest", country:"Hungary", region:"Europe", lat:47.4979, lng:19.0402, img:"", desc:"Twin cities on the Danube — Buda's castle and Pest's ruin bars at golden hour.", article:"" },
+
+  /* ── РУМЪНИЯ ── */
+  { name:"Bucharest", country:"Romania", region:"Europe", lat:44.4268, lng:26.1025, img:"", desc:"The Paris of the East — a city of Belle Époque boulevards and communist mega-palaces.", article:"" },
+  { name:"Transylvania", country:"Romania", region:"Europe", lat:46.0, lng:25.0, img:"", desc:"Medieval Saxon towns, Dracula's castle and the most dramatic mountain roads in Europe.", article:"" },
+
+  /* ── КИТАЙ ── */
+  { name:"Beijing", country:"People's Republic of China", region:"Asia", lat:39.9042, lng:116.4074, img:"", desc:"The Forbidden City, the Great Wall, and a city of 22 million in constant motion.", article:"" },
+  { name:"Chaozhou", country:"People's Republic of China", region:"Asia", lat:23.6618, lng:116.6220, img:"", desc:"An ancient city of Chaoshan culture, teahouses and intricate embroidery.", article:"" },
+  { name:"Guangzhou", country:"People's Republic of China", region:"Asia", lat:23.1291, lng:113.2644, img:"", desc:"The Pearl River Delta's great trading city — dim sum capital of the world.", article:"" },
+  { name:"Foshan", country:"People's Republic of China", region:"Asia", lat:23.0218, lng:113.1216, img:"", desc:"The birthplace of Bruce Lee and a centre of Cantonese martial arts and ceramics.", article:"" },
+  { name:"Hong Kong", country:"Hong Kong SAR", region:"Asia", lat:22.3193, lng:114.1694, img:"", desc:"Seven million people on a mountainous island — the most cinematic skyline on earth.", article:"" },
+  { name:"Shenzhen", country:"People's Republic of China", region:"Asia", lat:22.5431, lng:114.0579, img:"", desc:"A fishing village that became a megacity in forty years.", article:"" },
+
+  /* ── ТАЙЛАНД ── */
+  { name:"Bangkok", country:"Thailand", region:"Asia", lat:13.7563, lng:100.5018, img:"", desc:"Temples, tuk-tuks and the finest street food on the planet.", article:"" },
+  { name:"Koh Tao", country:"Thailand", region:"Asia", lat:10.0956, lng:99.8400, img:"", desc:"A small island in the Gulf of Thailand famous for diving and sunsets.", article:"" },
+  { name:"Ao Nang", country:"Thailand", region:"Asia", lat:8.0326, lng:98.8220, img:"", desc:"Limestone karsts rising from emerald water on the Andaman coast.", article:"" },
+
+  /* ── МАЛАЙЗИЯ ── */
+  { name:"Kuala Lumpur", country:"Malaysia", region:"Asia", lat:3.1390, lng:101.6869, img:"", desc:"The Petronas Towers above a city of food courts, mosques and colonial arcades.", article:"" },
+
+  /* ── СИНГАПУР ── */
+  { name:"Singapore", country:"Singapore", region:"Asia", lat:1.3521, lng:103.8198, img:"", desc:"A city-state that built a garden inside an airport — and made it the best in the world.", article:"" },
+
+  /* ── ЙОРДАНИЯ ── */
+  { name:"Amman", country:"Jordan", region:"Asia", lat:31.9454, lng:35.9284, img:"", desc:"A city of seven hills, Roman ruins and the warmest hospitality in the Middle East.", article:"" },
+  { name:"Petra", country:"Jordan", region:"Asia", lat:30.3285, lng:35.4444, img:"", desc:"The rose-red city carved into sandstone cliffs — one of the wonders of the world.", article:"" },
+
+  /* ── ФИЛИПИНИ ── */
+  { name:"Manila", country:"Philippines", region:"Asia", lat:14.5995, lng:120.9842, img:"", desc:"The chaotic, vibrant capital of the Philippines on Manila Bay.", article:"" },
+  { name:"Puerto Princesa", country:"Philippines", region:"Asia", lat:9.7392, lng:118.7353, img:"", desc:"Gateway to Palawan — the Underground River and some of the world's best diving.", article:"" },
+  { name:"Coron", country:"Philippines", region:"Asia", lat:12.0022, lng:120.2040, img:"", desc:"Crystal lagoons, WWII wrecks and the clearest water in the Philippines.", article:"" },
+
+  /* ── САЩ ── */
+  { name:"Washington DC", country:"USA", region:"Americas", lat:38.9072, lng:-77.0369, img:"", desc:"Monuments, museums and the Mall — the capital of the world's most powerful nation.", article:"" },
+  { name:"Boston", country:"USA", region:"Americas", lat:42.3601, lng:-71.0589, img:"", desc:"America's most European city — cobblestone streets, Harvard Yard and clam chowder.", article:"" },
+  { name:"Baltimore", country:"USA", region:"Americas", lat:39.2904, lng:-76.6122, img:"", desc:"Crab cakes, the Inner Harbor and the birthplace of the Star-Spangled Banner.", article:"" },
+  { name:"Las Vegas", country:"USA", region:"Americas", lat:36.1699, lng:-115.1398, img:"", desc:"The neon desert — a city that never sleeps and never asks questions.", article:"" },
+  { name:"Los Angeles", country:"USA", region:"Americas", lat:34.0522, lng:-118.2437, img:"", desc:"Endless sunshine, Pacific waves and the dream factory of Hollywood.", article:"" },
+  { name:"San Francisco", country:"USA", region:"Americas", lat:37.7749, lng:-122.4194, img:"", desc:"The Golden Gate, cable cars and the most beautiful bay in America.", article:"" },
+  { name:"Philadelphia", country:"USA", region:"Americas", lat:39.9526, lng:-75.1652, img:"", desc:"The city of brotherly love — Liberty Bell, cheesesteaks and Rocky steps.", article:"" },
+  { name:"New York", country:"USA", region:"Americas", lat:40.7128, lng:-74.0060, img:"", desc:"The city that never sleeps — Central Park, Times Square and the best bagels on earth.", article:"" },
+  { name:"Miami", country:"USA", region:"Americas", lat:25.7617, lng:-80.1918, img:"", desc:"Art Deco, mojitos, white sand and the most vibrant Latin culture in North America.", article:"" },
+  /* ── НОВИ МЕСТА ── */
+  { name:"Surat Thani", country:"Thailand", region:"Asia", lat:9.1382, lng:99.3214, img:"", desc:"The gateway to the Gulf of Thailand islands — ferries, night trains and the smell of the sea.", article:"" },
+  { name:"Zambales", country:"Philippines", region:"Asia", lat:15.5082, lng:119.9697, img:"", desc:"Wild Pacific coastline, volcanic peaks and some of the most unspoiled beaches in Luzon.", article:"" },
+  { name:"Ruse", country:"Bulgaria", region:"Europe", lat:43.8485, lng:25.9543, img:"", desc:"Bulgaria's Danube city — Belle Époque architecture and the gateway to Romania.", article:"" },
+
+];
+
+/* ═══════════════════════════════════════════════
+   МАРШРУТИ — връзки между места
+   type: "flight"  → ✈️ пунктирана синя линия
+   type: "train"   → 🚂 плътна зелена линия
+   type: "road"    → 🚗 точкувана кафява линия
+   from/to: [lat, lng]
+
+   ДОБАВЯЙ НОВИ МАРШРУТИ ТУК:
+   { from: [lat1, lng1], to: [lat2, lng2], type: "flight" },
+═══════════════════════════════════════════════ */
+const routes = [
+  /* ── ВЛАК ── */
+  { from:[23.1291,113.2644], to:[22.5431,114.0579],  type:"train" }, // Guangzhou→Shenzhen
+  { from:[23.1291,113.2644], to:[23.6618,116.6220],  type:"train" }, // Guangzhou→Chaozhou
+  { from:[23.1291,113.2644], to:[22.3193,114.1694],  type:"train" }, // Guangzhou→Hong Kong
+  { from:[50.1109,8.6821],   to:[51.2217,6.7762],    type:"train" }, // Frankfurt→Düsseldorf
+  { from:[43.7696,11.2558],  to:[43.7228,10.4017],   type:"train" }, // Florence→Pisa
+  { from:[48.1486,17.1077],  to:[48.2082,16.3738],   type:"train" }, // Bratislava→Vienna
+
+  /* ── КОЛА ── */
+  { from:[42.6977,23.3219],  to:[41.0082,28.9784],   type:"road" },  // Sofia→Istanbul
+  { from:[3.1390,101.6869],  to:[1.3521,103.8198],   type:"road" },  // KL→Singapore
+  { from:[31.9454,35.9284],  to:[30.3285,35.4444],   type:"road" },  // Amman→Petra
+  { from:[42.6977,23.3219],  to:[39.5020,20.2656],   type:"road" },  // Sofia→Igoumenitsa
+  { from:[39.5020,20.2656],  to:[41.1177,16.8719],   type:"road" },  // Igoumenitsa→Bari
+  { from:[41.1177,16.8719],  to:[40.8518,14.2681],   type:"road" },  // Bari→Naples
+  { from:[40.8518,14.2681],  to:[40.6263,14.3757],   type:"road" },  // Naples→Sorrento
+  { from:[36.1699,-115.1398],to:[34.0522,-118.2437], type:"road" },  // LasVegas→LA
+  { from:[34.0522,-118.2437],to:[37.7749,-122.4194], type:"road" },  // LA→SF
+  { from:[37.7749,-122.4194],to:[36.1699,-115.1398], type:"road" },  // SF→LasVegas
+  { from:[38.9072,-77.0369], to:[39.9526,-75.1652],  type:"road" },  // Washington→Philadelphia
+  { from:[39.9526,-75.1652], to:[40.7128,-74.0060],  type:"road" },  // Philadelphia→NY
+  { from:[45.4642,9.1900],   to:[46.4983,11.3548],   type:"road" },  // Milan→Bolzano
+  { from:[48.2082,16.3738],  to:[47.5622,13.6493],   type:"road" },  // Vienna→Hallstatt
+  { from:[47.5622,13.6493],  to:[47.0707,15.4395],   type:"road" },  // Hallstatt→Graz
+  { from:[42.6977,23.3219],  to:[45.2671,19.8335],   type:"road" },  // Sofia→Novi Sad
+  { from:[42.6977,23.3219],  to:[42.8408,20.1672],   type:"road" },  // Sofia→Rožaje
+  { from:[42.8408,20.1672],  to:[42.4304,19.2594],   type:"road" },  // Rožaje→Podgorica
+  { from:[42.4304,19.2594],  to:[42.2883,18.8400],   type:"road" },  // Podgorica→Budva
+  { from:[42.2883,18.8400],  to:[42.4247,18.7712],   type:"road" },  // Budva→Kotor
+  { from:[42.4247,18.7712],  to:[42.6507,18.0944],   type:"road" },  // Kotor→Dubrovnik
+  { from:[42.6507,18.0944],  to:[42.6977,23.3219],   type:"road" },  // Dubrovnik→Sofia
+  { from:[43.0757,25.6172],  to:[44.4268,26.1025],   type:"road" },  // VelikoTarnovo→Bucharest
+  { from:[44.4268,26.1025],  to:[46.0,25.0],         type:"road" },  // Bucharest→Transylvania
+  { from:[45.2671,19.8335],  to:[47.4979,19.0402],   type:"road" },  // NoviSad→Budapest
+  { from:[27.9202,-15.5474], to:[27.7608,-15.5897],  type:"road" },  // GranCanaria→Maspalomas
+  { from:[42.6977,23.3219],  to:[40.6401,22.9444],   type:"road" },  // Sofia→Thessaloniki
+  { from:[40.6401,22.9444],  to:[40.9395,24.4024],   type:"road" },  // Thessaloniki→Kavala
+  { from:[42.6977,23.3219],  to:[39.9167,25.2333],   type:"road" },  // Sofia→Limnos
+
+  /* ── ПОЛЕТ ── */
+  { from:[42.6977,23.3219],  to:[41.0082,28.9784],   type:"flight" }, // Sofia→Istanbul
+  { from:[41.0082,28.9784],  to:[14.5995,120.9842],  type:"flight" }, // Istanbul→Manila
+  { from:[41.0082,28.9784],  to:[23.1291,113.2644],  type:"flight" }, // Istanbul→Guangzhou
+  { from:[41.0082,28.9784],  to:[38.9072,-77.0369],  type:"flight" }, // Istanbul→Washington
+  { from:[42.6977,23.3219],  to:[48.1351,11.5820],   type:"flight" }, // Sofia→Munich
+  { from:[48.1351,11.5820],  to:[41.6938,44.8015],   type:"flight" }, // Munich→Tbilisi
+  { from:[48.1351,11.5820],  to:[42.3601,-71.0589],  type:"flight" }, // Munich→Boston
+  { from:[42.3601,-71.0589], to:[50.1109,8.6821],    type:"flight" }, // Boston→Frankfurt
+  { from:[50.1109,8.6821],   to:[42.6977,23.3219],   type:"flight" }, // Frankfurt→Sofia
+  { from:[50.1109,8.6821],   to:[38.7223,-9.1393],   type:"flight" }, // Frankfurt→Lisbon
+  { from:[50.1109,8.6821],   to:[31.9454,35.9284],   type:"flight" }, // Frankfurt→Amman
+  { from:[42.6977,23.3219],  to:[35.9375,14.3754],   type:"flight" }, // Sofia→Malta
+  { from:[8.0326,98.8220],   to:[3.1390,101.6869],   type:"flight" }, // AoNang→KL
+  { from:[42.6977,23.3219],  to:[44.4949,11.3426],   type:"flight" }, // Sofia→Bologna
+  { from:[38.7223,-9.1393],  to:[42.6977,23.3219],   type:"flight" }, // Lisbon→Sofia
+  { from:[39.2904,-76.6122], to:[36.1699,-115.1398], type:"flight" }, // Baltimore→LasVegas
+  { from:[40.7128,-74.0060], to:[48.8566,2.3522],    type:"flight" }, // NY→Paris
+  { from:[42.6977,23.3219],  to:[52.3676,4.9041],    type:"flight" }, // Sofia→Amsterdam
+  { from:[52.3676,4.9041],   to:[38.9072,-77.0369],  type:"flight" }, // Amsterdam→Washington
+  { from:[42.6977,23.3219],  to:[48.1486,17.1077],   type:"flight" }, // Sofia→Bratislava
+  { from:[50.1109,8.6821],   to:[45.4642,9.1900],    type:"flight" }, // Frankfurt→Milan
+  { from:[42.6977,23.3219],  to:[51.5074,-0.1278],   type:"flight" }, // Sofia→London
+  { from:[42.6977,23.3219],  to:[45.8150,15.9819],   type:"flight" }, // Sofia→Zagreb
+  { from:[41.9028,12.4964],  to:[27.9202,-15.5474],  type:"flight" }, // Rome→GranCanaria
+  { from:[14.5995,120.9842], to:[9.7392,118.7353],   type:"flight" }, // Manila→PuertoPrincesa
+  { from:[14.5995,120.9842], to:[12.0022,120.2040],  type:"flight" }, // Manila→Coron
+  { from:[39.2904,-76.6122], to:[25.7617,-80.1918],  type:"flight" }, // Baltimore→Miami
+  { from:[25.7617,-80.1918], to:[50.1109,8.6821],    type:"flight" }, // Miami→Frankfurt
+  { from:[1.3521,103.8198],  to:[48.1351,11.5820],   type:"flight" }, // Singapore→Munich
+  /* ── НОВИ МАРШРУТИ ── */
+  // Полет
+  { from:[23.1291,113.2644],  to:[39.9042,116.4074],  type:"flight" }, // Guangzhou→Beijing
+  // Влак
+  { from:[13.7563,100.5018],  to:[9.1382,99.3214],    type:"train" },  // Bangkok→SuratThani
+  // Кола
+  { from:[23.1291,113.2644],  to:[23.0218,113.1216],  type:"road" },   // Guangzhou→Foshan
+  { from:[9.1382,99.3214],    to:[10.0956,99.8400],   type:"road" },   // SuratThani→KohTao
+  { from:[10.0956,99.8400],   to:[8.0326,98.8220],    type:"road" },   // KohTao→AoNang
+  { from:[14.5995,120.9842],  to:[15.5082,119.9697],  type:"road" },   // Manila→Zambales
+  { from:[42.6977,23.3219],   to:[40.8900,24.2800],   type:"road" },   // Sofia→NeaIraklitsa
+  { from:[40.8900,24.2800],   to:[40.9395,24.4024],   type:"road" },   // NeaIraklitsa→Kavala
+  { from:[40.9395,24.4024],   to:[42.6977,23.3219],   type:"road" },   // Kavala→Sofia
+  { from:[42.6977,23.3219],   to:[40.3167,23.3667],   type:"road" },   // Sofia→Halkidiki
+  { from:[42.6977,23.3219],   to:[42.0700,23.1500],   type:"road" },   // Sofia→StobPyramids
+  { from:[43.8485,25.9543],   to:[44.4268,26.1025],   type:"road" },   // Ruse→Bucharest
+
+];
+
+/* ── Инициализация на картата ── */
+const map = L.map('map', {
+  center: [35, 40],
+  zoom: 2.5,
+  zoomControl: true,
+  scrollWheelZoom: true,
+  minZoom: 2.5
+});
+
+/* Светла минималистична карта без брандинг */
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors © <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(map);
+
+/* ── Custom marker icon ── */
+function makeIcon(featured) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="
+      width:14px; height:14px;
+      background:${featured ? '#664343' : '#3B3030'};
+      border:2.5px solid #fff;
+      border-radius:50%;
+      box-shadow:0 2px 8px rgba(0,0,0,.3);
+      cursor:pointer;
+      transition:transform .2s;
+    "></div>`,
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+    popupAnchor: [0, -10]
+  });
+}
+
+/* ── Popup HTML builder ── */
+function makePopup(p) {
+  const imgHtml = p.img
+    ? `<img class="popup-img" src="${p.img}" alt="${p.name}">`
+    : `<div class="popup-img-placeholder"><i class="fas fa-camera"></i></div>`;
+
+  const linkHtml = p.article
+    ? `<a href="${p.article}" class="popup-link" target="_blank">Read the story <i class="fas fa-arrow-right"></i></a>`
+    : `<span class="popup-no-link"><i class="fas fa-clock"></i> Article coming soon</span>`;
+
+  return `
+    <div class="popup-wrap">
+      ${imgHtml}
+      <div class="popup-body">
+        <p class="popup-region">${p.region} · ${p.country}</p>
+        <p class="popup-title">${p.name}</p>
+        <p class="popup-desc">${p.desc}</p>
+        ${linkHtml}
+      </div>
+    </div>`;
+}
+
+
+/* ── Легенда ── */
+const legend = L.control({ position: 'bottomleft' });
+legend.onAdd = function() {
+  const div = L.DomUtil.create('div');
+  div.style.cssText = 'background:rgba(255,255,255,0.95);padding:12px 16px;font-family:Ubuntu,sans-serif;font-size:12px;line-height:1.8;box-shadow:0 2px 12px rgba(0,0,0,.12);';
+  div.innerHTML = `
+    <div style="font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#3B3030;margin-bottom:8px;">Transport</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+      <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#D741A7" stroke-width="2"/></svg>
+      <span style="color:#6b6b6b;">✈ Flight</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+      <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#F1BCE0" stroke-width="2.5" stroke-dasharray="10,5"/></svg>
+      <span style="color:#6b6b6b;">🚂 Train</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <svg width="32" height="10"><line x1="0" y1="5" x2="32" y2="5" stroke="#664343" stroke-width="2" stroke-dasharray="2,2"/></svg>
+      <span style="color:#6b6b6b;">🚗 Road</span>
+    </div>`;
+  return div;
+};
+legend.addTo(map);
+
+/* ── Маршрути ── */
+const routeStyles = {
+  flight: { color: '#D741A7', weight: 2, dashArray: null, opacity: 0.85 },
+  train:  { color: '#F1BCE0', weight: 2.5, dashArray: '10 5', opacity: 0.9 },
+  road:   { color: '#664343', weight: 2, dashArray: '2 3', opacity: 0.7 },
+};
+
+const allLines = [];
+routes.forEach(r => {
+  const style = routeStyles[r.type] || routeStyles.flight;
+  const line = L.polyline([r.from, r.to], {
+    color: style.color,
+    weight: style.weight,
+    opacity: style.opacity,
+    dashArray: style.dashArray,
+  });
+  line.addTo(map);
+  allLines.push(line);
+});
+
+/* ── Добавяне на маркери ── */
+let allMarkers = [];
+let activeFilter = 'all';
+
+places.forEach(p => {
+  const marker = L.marker([p.lat, p.lng], {
+    icon: makeIcon(p.article !== "")
+  });
+marker.bindPopup(makePopup(p), {
+    maxWidth: 300,
+    minWidth: 280,
+    closeButton: false
+  });
+marker.on('mouseover', function() { this.openPopup(); });
+  marker.on('mouseout', function(e) {
+    const popup = this._popup._container;
+    if (popup) {
+      popup.addEventListener('mouseenter', () => clearTimeout(this._closeTimer));
+      popup.addEventListener('mouseleave', () => { this.closePopup(); });
+    }
+    this._closeTimer = setTimeout(() => { this.closePopup(); }, 300);
+  });
+  marker.on('click', function() { this.openPopup(); });
+  marker.placeData = p;
+  allMarkers.push(marker);
+  marker.addTo(map);
+});
+
+/* ── Animated counter ── */
+function animateCounter(el, target, duration) {
+  var start = 0;
+  var startTime = null;
+  el.classList.add('counting');
+  var step = function(timestamp) {
+    if (!startTime) startTime = timestamp;
+    var progress = Math.min((timestamp - startTime) / duration, 1);
+    var ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(ease * target);
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      el.textContent = target;
+      el.classList.remove('counting');
+    }
+  };
+  requestAnimationFrame(step);
+}
+
+var firstLoad = true;
+function updateStats(filtered) {
+  const total     = filtered.length;
+  const articles  = filtered.filter(p => p.article).length;
+  const countries = new Set(filtered.map(p => p.country)).size;
+
+  if (firstLoad) {
+    firstLoad = false;
+    setTimeout(() => animateCounter(document.getElementById('total-places'),   total,    1000), 300);
+    setTimeout(() => animateCounter(document.getElementById('total-articles'),  articles, 1000), 500);
+    setTimeout(() => animateCounter(document.getElementById('total-countries'), countries,1000), 700);
+  } else {
+    document.getElementById('total-places').textContent   = total;
+    document.getElementById('total-articles').textContent = articles;
+    document.getElementById('total-countries').textContent = countries;
+  }
+}
+updateStats(places);
+
+/* ── Филтриране ── */
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+
+    /* Markers */
+    allMarkers.forEach(marker => {
+      const p = marker.placeData;
+      const show = activeFilter === 'all' || p.region === activeFilter;
+      if (show) { if (!map.hasLayer(marker)) marker.addTo(map); }
+      else       { if (map.hasLayer(marker))  map.removeLayer(marker); }
+    });
+
+    /* Lines — show all when ALL, hide all when region selected */
+    allLines.forEach(line => {
+      if (activeFilter === 'all') {
+        if (!map.hasLayer(line)) line.addTo(map);
+      } else {
+        if (map.hasLayer(line)) map.removeLayer(line);
+      }
+    });
+
+    const filtered = activeFilter === 'all'
+      ? places
+      : places.filter(p => p.region === activeFilter);
+    updateStats(filtered);
+  });
+});
+
+/* ── Mobile menu ── */
+
+
+/* ── Hamburger menu ── */
+(function() {
+  function initMenu() {
+    var ham = document.getElementById('ham');
+    var mobileNav = document.getElementById('mobileNav');
+    var mobileClose = document.getElementById('mobileClose');
+    if (!ham || !mobileNav) return;
+    function openMenu(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      mobileNav.classList.add('open');
+    }
+    ham.addEventListener('click', openMenu);
+    ham.addEventListener('touchend', openMenu);
+    if (mobileClose) {
+      mobileClose.addEventListener('click', function() {
+        mobileNav.classList.remove('open');
+      });
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMenu);
+  } else {
+    initMenu();
+  }
+})();
+
+
+function closeMobile() { document.getElementById("mobileNav").classList.remove("open"); }
+</script>
+</body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<!-- ← СМЕНИ заглавието -->
+<title>48 Hours in Hong Kong | Sunlit Canvas</title>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Palanquin:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.7.2/css/all.css"/>
+
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --dark:     #3B3030;
+  --accent:   #664343;
+  --accent-lt:#E4E0E1;
+  --white:    #ffffff;
+  --cream:    #EEE3CB;
+  --mist:     #6b6b6b;
+  --bg-foot:  #F8FBFB;
+  --ubuntu:   'Ubuntu', sans-serif;
+  --body:     'Palanquin', sans-serif;
+  --display:  'Playfair Display', serif;
+}
+
+html { scroll-behavior:smooth; font-size:16px; }
+body { font-family:var(--ubuntu); color:var(--dark); overflow-x:hidden; background:#0a0806; }
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:1500;
+  padding:16px; background:transparent;
+  transition:background .4s, padding .3s;
+  mix-blend-mode:normal;
+}
+nav.light {
+  background:rgba(255,255,255,0.96);
+  backdrop-filter:blur(10px);
+  box-shadow:0 1px 0 rgba(59,48,48,.08);
+}
+.nav-inner { max-width:1300px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; }
+.nav-logo img { width:48px; height:48px; display:block; filter:brightness(0) invert(1); transition:filter .4s; }
+nav.light .nav-logo img { filter:none; }
+.nav-back {
+  font-family:var(--ubuntu); font-size:13px; color:rgba(255,255,255,.8);
+  text-decoration:none; display:flex; align-items:center; gap:8px;
+  transition:color .3s;
+}
+nav.light .nav-back { color:var(--mist); }
+.nav-back:hover { color:#fff; }
+nav.light .nav-back:hover { color:var(--accent); }
+.nav-map {
+  display:flex; align-items:center; gap:8px;
+  background:var(--accent); color:#fff;
+  padding:8px 18px; border-radius:25px;
+  font-family:var(--ubuntu); font-size:13px; font-weight:700;
+  text-decoration:none; transition:box-shadow .2s;
+}
+.nav-map:hover { box-shadow:4px 4px 0 0 var(--dark); }
+.hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none; }
+.hamburger span { width:24px; height:2px; background:#fff; display:block; border-radius:2px; transition:background .3s; }
+nav.light .hamburger span { background:var(--dark); }
+.mobile-nav { display:none; position:fixed; inset:0; z-index:2000; background:var(--white); flex-direction:column; align-items:center; justify-content:center; gap:2rem; }
+.mobile-nav.open { display:flex; }
+.mobile-nav a { font-family:var(--ubuntu); font-size:1.8rem; color:var(--dark); text-decoration:none; }
+.mobile-close { position:absolute; top:1.5rem; right:1.5rem; font-size:2rem; background:none; border:none; cursor:pointer; }
+
+/* ── COVER ── */
+.cover {
+  height:100vh; position:relative; overflow:hidden;
+  display:flex; align-items:flex-end;
+}
+.cover-img {
+  position:absolute; inset:0;
+  background-image:url('https://images.unsplash.com/photo-1503803548695-c2a7b4a5b875?w=1600&q=85');
+  background-size:cover; background-position:50% 50%;
+  animation:coverKB 18s ease-in-out infinite alternate;
+}
+@keyframes coverKB {
+  0%   { transform:scale(1);    background-position:50% 45%; }
+  100% { transform:scale(1.06); background-position:50% 55%; }
+}
+.cover-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(10,8,6,0.92) 0%, rgba(10,8,6,0.3) 50%, rgba(10,8,6,0.1) 100%);
+}
+.cover-content {
+  position:relative; z-index:2;
+  padding:0 6vw 8vh; max-width:900px;
+  animation:coverFade 1.2s ease forwards;
+}
+@keyframes coverFade {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:none; }
+}
+.cover-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--ubuntu); font-size:11px; font-weight:700;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:rgba(255,255,255,.55); margin-bottom:20px;
+}
+.cover-tag::before { content:''; width:28px; height:1px; background:var(--accent); display:block; }
+.cover-title {
+  font-family:var(--display); font-size:clamp(2.8rem,7vw,6rem);
+  font-weight:700; color:#fff; line-height:1.05;
+  letter-spacing:-.5px; margin-bottom:20px;
+}
+.cover-title em { font-style:italic; font-weight:400; color:rgba(255,255,255,.7); }
+.cover-subtitle {
+  font-family:var(--body); font-size:1.2rem; color:rgba(255,255,255,.6);
+  line-height:1.7; max-width:520px; margin-bottom:32px;
+}
+.cover-meta {
+  display:flex; gap:24px; flex-wrap:wrap;
+  font-family:var(--ubuntu); font-size:12px;
+  letter-spacing:.08em; color:rgba(255,255,255,.4);
+}
+.cover-scroll {
+  position:absolute; bottom:2.5rem; right:6vw; z-index:2;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  font-family:var(--ubuntu); font-size:10px; letter-spacing:.2em;
+  text-transform:uppercase; color:rgba(255,255,255,.3);
+  animation:scrollBounce 2s ease-in-out infinite;
+}
+@keyframes scrollBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+.cover-scroll i { font-size:1rem; }
+
+/* ── STORY SECTIONS ── */
+.story-body { background:var(--white); }
+
+/* Fullscreen image section */
+.story-full {
+  height:100vh; position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.story-full-img {
+  position:absolute; inset:0;
+  background-size:cover; background-position:50% 50%;
+  background-attachment:fixed;
+  transition:transform .1s linear;
+}
+.story-full-caption {
+  position:absolute; bottom:2rem; left:50%; transform:translateX(-50%);
+  font-family:var(--ubuntu); font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:rgba(255,255,255,.5);
+  background:rgba(0,0,0,.3); padding:6px 14px; border-radius:25px;
+  white-space:nowrap;
+}
+
+/* Text section */
+.story-text {
+  max-width:680px; margin:0 auto;
+  padding:80px 24px;
+}
+.story-section-label {
+  font-family:var(--ubuntu); font-size:11px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--accent);
+  margin-bottom:16px; display:flex; align-items:center; gap:10px;
+}
+.story-section-label::before { content:''; width:20px; height:1px; background:var(--accent); display:block; }
+.story-h2 {
+  font-family:var(--display); font-size:clamp(1.8rem,4vw,2.8rem);
+  font-weight:700; color:var(--dark); line-height:1.2;
+  margin-bottom:24px; letter-spacing:-.3px;
+}
+.story-h2 em { font-style:italic; font-weight:400; color:var(--accent); }
+.story-p {
+  font-family:var(--body); font-size:1.15rem; color:#444;
+  line-height:1.9; margin-bottom:1.6rem;
+}
+.story-quote {
+  border-left:3px solid var(--accent); padding:16px 24px;
+  margin:2rem 0; font-family:var(--display); font-style:italic;
+  font-size:1.35rem; color:var(--dark); line-height:1.55;
+}
+
+/* Split section — image left/right + text */
+.story-split {
+  display:grid; grid-template-columns:1fr 1fr;
+  min-height:70vh; max-height:800px;
+}
+.story-split.reverse { direction:rtl; }
+.story-split.reverse > * { direction:ltr; }
+.story-split-img {
+  overflow:hidden; position:relative;
+}
+.story-split-img img {
+  width:100%; height:100%; object-fit:cover; display:block;
+  transition:transform .8s ease;
+}
+.story-split:hover .story-split-img img { transform:scale(1.03); }
+.story-split-text {
+  display:flex; flex-direction:column; justify-content:center;
+  padding:60px 5vw; background:var(--white);
+}
+.story-split.dark .story-split-text { background:#1a1614; }
+.story-split.dark .story-h2 { color:#fff; }
+.story-split.dark .story-p { color:rgba(255,255,255,.6); }
+.story-split.cream .story-split-text { background:var(--cream); }
+
+/* Behind the shot */
+.behind-shot {
+  background:#111; padding:80px 24px;
+  display:flex; flex-direction:column; align-items:center;
+}
+.behind-label {
+  font-family:var(--ubuntu); font-size:11px; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--accent);
+  margin-bottom:48px; display:flex; align-items:center; gap:12px;
+}
+.behind-label::before, .behind-label::after { content:''; flex:1; height:1px; background:rgba(255,255,255,.1); max-width:80px; display:block; }
+.behind-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:2px; max-width:1100px; width:100%;
+  margin-bottom:48px;
+}
+.behind-main { grid-row:1/3; overflow:hidden; }
+.behind-main img, .behind-grid-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.behind-main img { height:100%; }
+.behind-grid-img { overflow:hidden; height:240px; }
+.behind-text {
+  max-width:680px; text-align:center;
+}
+.behind-text h3 {
+  font-family:var(--display); font-size:1.6rem; font-weight:700;
+  color:#fff; margin-bottom:16px; font-style:italic;
+}
+.behind-text p {
+  font-family:var(--body); font-size:1rem; color:rgba(255,255,255,.5);
+  line-height:1.85;
+}
+.behind-specs {
+  display:flex; gap:32px; margin-top:24px; flex-wrap:wrap; justify-content:center;
+}
+.behind-spec { text-align:center; }
+.behind-spec strong { display:block; font-family:var(--ubuntu); font-size:12px; color:var(--accent); letter-spacing:.1em; text-transform:uppercase; margin-bottom:4px; }
+.behind-spec span { font-family:var(--body); font-size:14px; color:rgba(255,255,255,.4); }
+
+/* Next story */
+.next-story {
+  position:relative; height:50vh; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; text-decoration:none;
+}
+.next-story-img {
+  position:absolute; inset:0;
+  background-size:cover; background-position:50% 50%;
+  background-image:url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1200&q=80');
+  filter:brightness(.4); transition:filter .5s, transform .5s;
+}
+.next-story:hover .next-story-img { filter:brightness(.55); transform:scale(1.03); }
+.next-story-content { position:relative; z-index:2; text-align:center; }
+.next-label { font-family:var(--ubuntu); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.45); margin-bottom:12px; }
+.next-title { font-family:var(--display); font-size:clamp(1.6rem,4vw,3rem); color:#fff; font-style:italic; }
+
+/* FOOTER */
+footer { background:#0a0806; padding:30px 24px; border-top:1px solid rgba(255,255,255,.06); }
+.footer-bottom { max-width:1300px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-family:var(--ubuntu); font-size:13px; color:rgba(255,255,255,.25); }
+.footer-bottom a { color:inherit; text-decoration:none; }
+.footer-bottom a:hover { color:rgba(255,255,255,.6); }
+.footer-bottom-links { display:flex; gap:20px; }
+
+/* REVEAL */
+.sr { opacity:0; transform:translateY(28px); transition:opacity .9s ease, transform .9s ease; }
+.sr.on { opacity:1; transform:none; }
+.sr-delay-1 { transition-delay:.15s; }
+.sr-delay-2 { transition-delay:.3s; }
+
+/* RESPONSIVE */
+@media (max-width:768px) {
+  .hamburger { display:flex; }
+  .nav-map { display:none; }
+  .story-split { grid-template-columns:1fr; max-height:none; }
+  .story-split.reverse { direction:ltr; }
+  .story-split-img { height:60vw; }
+  .story-split-text { padding:40px 24px; }
+  .behind-grid { grid-template-columns:1fr; }
+  .behind-main { grid-row:auto; }
+  .cover-content { padding:0 24px 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="storyNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="https://res.cloudinary.com/dbyioi2qq/q_auto/v1716326701/static/sunlitcanvaslogosvg_1716326700_53038.svg" alt="Sunlit Canvas">
+    </a>
+    <a href="blog.html" class="nav-back"><i class="fas fa-arrow-left"></i> Stories & Guides</a>
+    <a href="map.html" class="nav-map"><i class="fas fa-map"></i> Interactive map</a>
+    <button class="hamburger" id="ham"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-close" id="mobileClose">✕</button>
+  <a href="blog.html" onclick="closeMobile()">← Stories</a>
+  <a href="gallery.html" onclick="closeMobile()">Photo Gallery</a>
+  <a href="map.html" onclick="closeMobile()">Interactive Map</a>
+</div>
+
+<!-- ══ COVER ══ -->
+<!-- ← СМЕНИ background-image в .cover-img с твоя снимка -->
+<div class="cover">
+  <div class="cover-img"></div>
+  <div class="cover-overlay"></div>
+  <div class="cover-content">
+    <!-- ← СМЕНИ тага -->
+    <p class="cover-tag">Asia · Hong Kong</p>
+    <h1 class="cover-title">48 Hours<br><em>in Hong Kong</em></h1>
+    <p class="cover-subtitle">A bullet train, a misplaced tram, the world's highest rooftop bar — and the best two days you can have in a city that never slows down.</p>
+    <div class="cover-meta">
+      <span><i class="fas fa-calendar-alt" style="margin-right:6px;opacity:.4"></i>2023</span>
+      <span><i class="fas fa-clock" style="margin-right:6px;opacity:.4"></i>5 min read</span>
+      <span><i class="fas fa-camera" style="margin-right:6px;opacity:.4"></i>Hong Kong Island</span>
+    </div>
+  </div>
+  <div class="cover-scroll">
+    <i class="fas fa-chevron-down"></i>
+    scroll
+  </div>
+</div>
+
+<!-- ══ STORY BODY ══ -->
+<div class="story-body">
+
+  <!-- TEXT SECTION 1 — Увод -->
+  <div class="story-text sr">
+    <!-- ← СМЕНИ тага на секцията -->
+    <p class="story-section-label">Arrival</p>
+    <!-- ← СМЕНИ заглавието -->
+    <h2 class="story-h2">The city that doesn't<br><em>believe in darkness</em></h2>
+    <!-- ← НАПИШИ текст тук -->
+    <p class="story-p">
+      The ferry from Kowloon to Hong Kong Island takes eight minutes. In those eight minutes, the skyline rearranges itself with every metre of water crossed — towers shifting behind towers, light multiplying off glass and sea, the whole impossible city performing itself for the camera I hadn't yet raised.
+    </p>
+    <p class="story-p">
+      I arrived at 11pm. By midnight I was on the rooftop of a building whose name I never learned, watching a city that operates at a different frequency than any other place I've been. Not faster. Just more certain of itself.
+    </p>
+    <!-- ЦИТАТ — незадължителен -->
+    <blockquote class="story-quote">
+      "Every city has a colour. Hong Kong's is the particular electric pink of a neon sign reflected in wet pavement."
+    </blockquote>
+  </div>
+
+  <!-- FULLSCREEN IMAGE 1 -->
+  <!-- ← СМЕНИ background-image с твоя снимка -->
+  <div class="story-full">
+    <div class="story-full-img" style="background-image:url('https://images.unsplash.com/photo-1503803548695-c2a7b4a5b875?w=1600&q=85');"></div>
+    <p class="story-full-caption">Victoria Harbour, 00:34 · Canon EOS R5 · 24mm · f/2.8 · 1/40s</p>
+  </div>
+
+  <!-- SPLIT — image right, text left -->
+  <div class="story-split">
+    <div class="story-split-text sr">
+      <p class="story-section-label">Behind the shot</p>
+      <h2 class="story-h2">Finding the <em>frame</em></h2>
+      <p class="story-p">
+        <!-- ← НАПИШИ историята зад снимката -->
+        I waited forty minutes at this spot. The composition was wrong — too much sky, not enough city — until a tram passed at exactly the right moment and gave the foreground the weight it needed. That's the thing about street photography: you're not taking a picture, you're waiting for one.
+      </p>
+      <p class="story-p">The light here is natural chaos — dozens of sources, no single direction. Learning to read it is learning to read the city.</p>
+    </div>
+    <div class="story-split-img">
+      <!-- ← СМЕНИ src -->
+      <img src="https://images.unsplash.com/photo-1561518776-e76a5e48f731?w=900&q=80" alt="Hong Kong street">
+    </div>
+  </div>
+
+  <!-- SPLIT — image left, text right, dark bg -->
+  <div class="story-split reverse dark">
+    <div class="story-split-img">
+      <!-- ← СМЕНИ src -->
+      <img src="https://images.unsplash.com/photo-1624138784614-87fd1b6528f8?w=900&q=80" alt="Hong Kong night">
+    </div>
+    <div class="story-split-text sr">
+      <p class="story-section-label" style="color:var(--accent);">The detail</p>
+      <h2 class="story-h2" style="color:#fff;">What you see when<br><em>you slow down</em></h2>
+      <p class="story-p" style="color:rgba(255,255,255,.55);">
+        <!-- ← НАПИШИ текст -->
+        The best photographs in Hong Kong aren't of the skyline. They're of the spaces in between — the wet market at 3am, the mahjong parlour where the tiles click like a clock, the old woman who has lived in the same building since before the handover.
+      </p>
+    </div>
+  </div>
+
+  <!-- TEXT SECTION 2 -->
+  <div class="story-text sr">
+    <p class="story-section-label">Reflection</p>
+    <h2 class="story-h2">What the city<br><em>taught me</em></h2>
+    <p class="story-p">
+      <!-- ← НАПИШИ финалните мисли -->
+      I left Hong Kong with 847 photographs and deleted 810 of them. That's not failure — that's learning what a city is. The 37 that remained are not the best-lit or the most technically correct. They're the ones that still smell like rain and sesame oil when I look at them.
+    </p>
+    <p class="story-p">
+      Every city you photograph changes the way you see the next one. Hong Kong changed everything.
+    </p>
+  </div>
+
+  <!-- ══ BEHIND THE SHOT — детайли ══ -->
+  <div class="behind-shot">
+    <p class="behind-label">Behind the shot</p>
+    <div class="behind-grid">
+      <div class="behind-main">
+        <!-- ← СМЕНИ src — главната снимка -->
+        <img src="https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=900&q=85" alt="Main shot">
+      </div>
+      <div class="behind-grid-img">
+        <!-- ← СМЕНИ src -->
+        <img src="https://images.unsplash.com/photo-1561518776-e76a5e48f731?w=700&q=75" alt="Detail">
+      </div>
+      <div class="behind-grid-img">
+        <!-- ← СМЕНИ src -->
+        <img src="https://images.unsplash.com/photo-1624138784614-87fd1b6528f8?w=700&q=75" alt="Detail 2">
+      </div>
+    </div>
+    <div class="behind-text">
+      <!-- ← СМЕНИ заглавието и описанието -->
+      <h3>"The shot I almost didn't take"</h3>
+      <p>The battery was at 4%. The rain had started. I had fifteen minutes before the last ferry. This is the photograph I'm most glad I didn't delete.</p>
+      <!-- ← СМЕНИ техническите детайли -->
+      <div class="behind-specs">
+        <div class="behind-spec"><strong>Camera</strong><span>Canon EOS R5</span></div>
+        <div class="behind-spec"><strong>Lens</strong><span>24mm f/1.4</span></div>
+        <div class="behind-spec"><strong>Settings</strong><span>f/2 · 1/30s · ISO 3200</span></div>
+        <div class="behind-spec"><strong>Time</strong><span>00:41 AM</span></div>
+        <div class="behind-spec"><strong>Location</strong><span>Victoria Harbour</span></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end story-body -->
+
+<!-- NEXT STORY -->
+<!-- ← СМЕНИ линка, снимката и заглавието -->
+<a href="blog.html" class="next-story">
+  <div class="next-story-img"></div>
+  <div class="next-story-content">
+    <p class="next-label">Next story</p>
+    <p class="next-title">Stories & Guides</p>
+  </div>
+</a>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-bottom">
+    <span>© Copyright 2024, All Rights Reserved — Sunlit Canvas</span>
+    <div class="footer-bottom-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms & Conditions</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Nav light/dark on scroll */
+const nav = document.getElementById('storyNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('light', window.scrollY > window.innerHeight * 0.85);
+});
+
+/* Reveal on scroll */
+const obs = new IntersectionObserver(
+  entries => entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } }),
+  { threshold: 0, rootMargin: '0px 0px -60px 0px' }
+);
+document.querySelectorAll('.sr').forEach(el => obs.observe(el));
+
+/* Mobile menu */
+document.getElementById('ham').addEventListener('click', () => document.getElementById('mobileNav').classList.add('open'));
+document.getElementById('mobileClose').addEventListener('click', closeMobile);
+function closeMobile() { document.getElementById('mobileNav').classList.remove('open'); }
+</script>
+</body>
+</html>

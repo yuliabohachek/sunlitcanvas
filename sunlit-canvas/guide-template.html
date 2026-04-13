@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<!-- ← СМЕНИ заглавието -->
+<title>Guide Title | Sunlit Canvas</title>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Palanquin:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.7.2/css/all.css"/>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --dark:     #3B3030;
+  --accent:   #664343;
+  --accent-lt:#E4E0E1;
+  --white:    #ffffff;
+  --cream:    #EEE3CB;
+  --mist:     #6b6b6b;
+  --bg-foot:  #F8FBFB;
+  --ubuntu:   'Ubuntu', sans-serif;
+  --body:     'Palanquin', sans-serif;
+}
+html { font-size:16px; scroll-behavior:smooth; }
+body { font-family:var(--ubuntu); color:var(--dark); background:var(--white); overflow-x:hidden; }
+
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:1500;
+  padding:16px; background:rgba(255,255,255,0.97);
+  backdrop-filter:blur(10px); box-shadow:0 1px 0 rgba(59,48,48,.08);
+}
+.nav-inner { max-width:1300px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; }
+.nav-logo img { width:56px; height:56px; display:block; }
+.nav-links { display:flex; gap:0; list-style:none; }
+.nav-links a {
+  font-family:var(--ubuntu); font-size:16px; font-weight:400;
+  color:var(--dark); text-decoration:none; padding:5px 12px;
+  border-radius:25px; display:block; transition:background .2s;
+}
+.nav-links a:hover { background:var(--accent-lt); color:var(--accent); }
+.nav-btn {
+  display:flex; align-items:center; gap:10px;
+  background:var(--accent); color:#fff; border:none;
+  padding:10px 24px; border-radius:25px;
+  font-family:var(--ubuntu); font-size:16px; font-weight:700;
+  text-decoration:none; transition:box-shadow .2s;
+}
+.nav-btn:hover { box-shadow:5px 5px 0 0 var(--dark); }
+.hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none; }
+.hamburger span { width:24px; height:2px; background:var(--dark); display:block; border-radius:2px; }
+.mobile-nav {
+  display:none; position:fixed; inset:0; z-index:2000;
+  background:var(--white); flex-direction:column;
+  align-items:center; justify-content:center; gap:1.5rem;
+}
+.mobile-nav.open { display:flex; }
+.mobile-nav a { font-family:var(--ubuntu); font-size:1.8rem; color:var(--dark); text-decoration:none; }
+.mobile-nav a:hover { color:var(--accent); }
+.mobile-close { position:absolute; top:1.5rem; right:1.5rem; font-size:2rem; background:none; border:none; cursor:pointer; }
+
+.article-hero { margin-top:88px; height:60vh; min-height:400px; position:relative; overflow:hidden; }
+.article-hero img { width:100%; height:100%; object-fit:cover; display:block; }
+.article-hero-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(59,48,48,.75) 0%, rgba(59,48,48,.1) 60%, transparent 100%);
+  display:flex; flex-direction:column; justify-content:flex-end; padding:40px;
+}
+.article-badge {
+  display:inline-block; background:var(--dark); color:#fff;
+  font-family:var(--ubuntu); font-size:11px; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase;
+  padding:4px 14px; border-radius:25px; margin-bottom:16px; width:fit-content;
+}
+.article-region { font-family:var(--ubuntu); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.7); margin-bottom:10px; }
+.article-hero-title { font-family:var(--ubuntu); font-size:clamp(1.8rem,4vw,3rem); font-weight:700; color:#fff; line-height:1.15; max-width:800px; }
+
+/* TWO COLUMN layout for guide */
+.guide-wrap {
+  max-width:1100px; margin:0 auto; padding:56px 16px 80px;
+  display:grid; grid-template-columns:1fr 280px; gap:56px; align-items:start;
+}
+.guide-main {}
+.guide-sidebar { position:sticky; top:120px; }
+
+.back-link {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--ubuntu); font-size:13px; color:var(--mist);
+  text-decoration:none; margin-bottom:32px;
+  border-bottom:1px solid transparent; transition:all .2s;
+}
+.back-link:hover { color:var(--accent); border-color:var(--accent); }
+
+.article-meta-bar {
+  display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+  font-family:var(--ubuntu); font-size:13px; color:var(--mist);
+  padding-bottom:28px; margin-bottom:36px;
+  border-bottom:1px solid rgba(59,48,48,.1);
+}
+.article-meta-bar i { margin-right:5px; opacity:.5; }
+
+.article-body { font-family:var(--body); font-size:18px; color:var(--dark); line-height:1.85; }
+.article-body p { margin-bottom:1.4rem; }
+.article-body h2 { font-family:var(--ubuntu); font-size:1.4rem; font-weight:700; color:var(--dark); margin:2.2rem 0 .8rem; letter-spacing:-.2px; }
+.article-body h2 em { font-style:italic; font-weight:300; color:var(--accent); }
+.article-body .photo-full { width:100%; margin:2rem 0; aspect-ratio:16/9; object-fit:cover; display:block; }
+.article-body .photo-caption { font-family:var(--ubuntu); font-size:12px; color:var(--mist); letter-spacing:.06em; text-align:center; margin-top:-1.4rem; margin-bottom:2rem; }
+
+/* tip box */
+.tip-box {
+  background:linear-gradient(135deg,#f9f6f1,#EEE3CB);
+  border-left:3px solid var(--accent);
+  padding:16px 20px; margin:1.8rem 0;
+  font-family:var(--body); font-size:16px; color:var(--dark); line-height:1.7;
+}
+.tip-box strong { font-family:var(--ubuntu); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); display:block; margin-bottom:6px; }
+
+/* SIDEBAR */
+.sidebar-card {
+  background:#f9f6f1; padding:24px;
+  border-top:3px solid var(--accent); margin-bottom:24px;
+}
+.sidebar-card h3 { font-family:var(--ubuntu); font-size:14px; font-weight:700; color:var(--dark); margin-bottom:14px; letter-spacing:-.1px; }
+.sidebar-list { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.sidebar-list li { font-family:var(--body); font-size:14px; color:var(--mist); line-height:1.5; display:flex; gap:8px; }
+.sidebar-list li::before { content:'→'; color:var(--accent); flex-shrink:0; }
+.sidebar-stat { display:flex; justify-content:space-between; align-items:center; font-family:var(--ubuntu); font-size:13px; padding:8px 0; border-bottom:1px solid rgba(59,48,48,.08); }
+.sidebar-stat:last-child { border:none; }
+.sidebar-stat span:first-child { color:var(--mist); }
+.sidebar-stat span:last-child { font-weight:700; color:var(--dark); }
+
+.next-article { margin-top:48px; padding-top:32px; border-top:1px solid rgba(59,48,48,.1); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+.next-label { font-family:var(--ubuntu); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--mist); margin-bottom:6px; }
+.next-title { font-family:var(--ubuntu); font-size:1.1rem; font-weight:700; color:var(--dark); text-decoration:none; transition:color .2s; }
+.next-title:hover { color:var(--accent); }
+.next-arrow { font-size:1.5rem; color:var(--accent); }
+
+footer { background:var(--bg-foot); padding:30px 16px; border-top:1px solid rgba(59,48,48,.08); }
+.footer-bottom { max-width:1300px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-family:var(--ubuntu); font-size:14px; color:#444; }
+.footer-bottom a { color:inherit; text-decoration:none; }
+.footer-bottom a:hover { color:var(--accent); }
+.footer-bottom-links { display:flex; gap:20px; }
+
+@media (max-width:960px) {
+  .nav-links, .nav-btn { display:none; }
+  .hamburger { display:flex; }
+  .guide-wrap { grid-template-columns:1fr; }
+  .guide-sidebar { position:static; }
+}
+
+/* ── Mobile nav z-index fix ── */
+nav { z-index:1600 !important; }
+.mobile-nav { z-index:3000 !important; }
+.hamburger { z-index:1700 !important; position:relative !important; cursor:pointer !important; }
+.nav-mobile-right { z-index:1700 !important; position:relative !important; }
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="https://res.cloudinary.com/dbyioi2qq/q_auto/v1716326701/static/sunlitcanvaslogosvg_1716326700_53038.svg" alt="Sunlit Canvas">
+    </a>
+    <ul class="nav-links">
+<li><a href="gallery.html">Photo Gallery</a></li>
+      <li><a href="blog.html">Stories & Guides</a></li>
+      <li><a href="#">Shop Prints</a></li>
+    </ul>
+    <a href="map.html" class="nav-btn"><i class="fas fa-map"></i> Interactive map</a>
+    <button class="hamburger" id="ham"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-close" id="mobileClose">✕</button>
+  <a href="gallery.html" onclick="closeMobile()">Photo gallery</a>
+  <a href="blog.html" onclick="closeMobile()">Blog</a>
+  <a href="index.html#newsletter" onclick="closeMobile()">Resources</a>
+</div>
+
+<!-- HERO -->
+<div class="article-hero">
+  <!-- ← СМЕНИ src -->
+  <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1600&q=85" alt="Guide cover">
+  <div class="article-hero-overlay">
+    <span class="article-badge">Travel Guide</span>
+    <!-- ← СМЕНИ региона -->
+    <p class="article-region">Asia · India</p>
+    <!-- ← СМЕНИ заглавието -->
+    <h1 class="article-hero-title">7 Days in Rajasthan: The Complete Photographer's Route</h1>
+  </div>
+</div>
+
+<div class="guide-wrap">
+
+  <!-- MAIN CONTENT -->
+  <div class="guide-main">
+    <a href="blog.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Guides</a>
+
+    <!-- ← СМЕНИ датата, времето и локацията -->
+    <div class="article-meta-bar">
+      <span><i class="fas fa-calendar-alt"></i>December 10, 2023</span>
+      <span><i class="fas fa-clock"></i>12 min read</span>
+      <span><i class="fas fa-map-marker-alt"></i>Rajasthan, India</span>
+    </div>
+
+    <div class="article-body">
+
+      <!-- ══════════════════════════════════════════
+           ШАБЛОН ЗА TRAVEL GUIDE
+           Попълни секциите по-долу.
+           Tip box-овете са за практически съвети.
+      ══════════════════════════════════════════ -->
+
+      <!-- INTRO -->
+      <p>
+        <!-- ← НАПИШИ кратко защо си избрала тази дестинация -->
+        Rajasthan is not a destination you plan — it is one that happens to you. I came for the forts and left with sand in my shoes, saffron on my fingers, and more photographs than I knew what to do with. This is the route I would take again without changing a single day.
+      </p>
+
+      <!-- GETTING THERE -->
+      <h2><i class="fas fa-plane" style="color:var(--accent);margin-right:10px;font-size:.9em"></i>Getting <em>there</em></h2>
+      <p>
+        <!-- ← НАПИШИ как си стигнала — полет, влак, автобус -->
+        The easiest entry point is Jaipur — well connected to Delhi by both flight (1 hour) and train (4.5 hours on the Shatabdi Express). I flew in from Sofia via Istanbul, with a one-night stopover in Delhi.
+      </p>
+
+      <div class="tip-box">
+        <strong>💡 Tip</strong>
+        <!-- ← НАПИШИ практически съвет за транспорт -->
+        Book trains on the IRCTC website at least 2 weeks in advance. Tourist quota seats are available even when regular seats are full — look for the "TQ" option.
+      </div>
+
+      <!-- WHERE TO STAY -->
+      <h2><i class="fas fa-bed" style="color:var(--accent);margin-right:10px;font-size:.9em"></i>Where to <em>stay</em></h2>
+      <p>
+        <!-- ← Напиши препоръки за настаняване -->
+        Rajasthan's heritage havelis — converted merchant mansions — are some of the most atmospheric places to sleep anywhere in the world. In Jaipur, look for properties in the old city walls. In Jodhpur, a rooftop view of the blue city is non-negotiable.
+      </p>
+
+      <img class="photo-full" src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1200&q=85" alt="Accommodation">
+      <p class="photo-caption">← СМЕНИ снимката и надписа</p>
+
+      <!-- WHAT TO SEE -->
+      <h2><i class="fas fa-camera" style="color:var(--accent);margin-right:10px;font-size:.9em"></i>What to <em>photograph</em></h2>
+      <p>
+        <!-- ← Напиши за фотографските локации -->
+        The golden hour at Mehrangarh Fort in Jodhpur is unmissable — arrive 30 minutes before sunset and find a spot on the northern ramparts. In Jaipur, the Hawa Mahal facade catches the morning light beautifully between 7 and 9am.
+      </p>
+
+      <div class="tip-box">
+        <strong>📸 Photography tip</strong>
+        <!-- ← Фото съвет -->
+        The blue houses of Jodhpur photograph best from above — hire a guide to take you to the rooftop terraces of the old city. Early morning before 8am gives you the streets without tourists.
+      </div>
+
+      <!-- BEST TIME TO VISIT -->
+      <h2><i class="fas fa-sun" style="color:var(--accent);margin-right:10px;font-size:.9em"></i>Best time <em>to visit</em></h2>
+      <p>
+        <!-- ← Напиши кога е най-добре -->
+        October to March is the ideal window — cool mornings, manageable midday heat, and the golden light that makes every photograph look painted. Avoid May and June (extreme heat above 45°C) and July–September (monsoon, though it brings dramatic skies).
+      </p>
+
+      <!-- PRACTICAL INFO -->
+      <h2><i class="fas fa-info-circle" style="color:var(--accent);margin-right:10px;font-size:.9em"></i>Practical <em>notes</em></h2>
+      <p>
+        <!-- ← Напиши бюджет, визи, валута, интернет -->
+        India requires a visa in advance — the e-visa (evisa.india.gov.in) takes 3–5 days and costs $25. The rupee is the local currency; carry cash for smaller towns. SIM cards with data are cheap and available at the airport.
+      </p>
+
+      <div class="tip-box">
+        <strong>💰 Budget guide</strong>
+        <!-- ← Примерен бюджет -->
+        Mid-range: €50–80/day including a heritage hotel, all meals, and entry fees. Budget: €20–30/day in guesthouses with street food. Entrance fees to major forts: €5–10 each.
+      </div>
+
+    </div>
+
+    <div class="next-article">
+      <div>
+        <p class="next-label">Next guide</p>
+        <!-- ← СМЕНИ линка и заглавието -->
+        <a href="guide-template.html" class="next-title">Iceland in 10 Days: Ring Road Without a Car</a>
+      </div>
+      <span class="next-arrow">→</span>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="guide-sidebar">
+
+    <div class="sidebar-card">
+      <h3>Quick Facts</h3>
+      <!-- ← СМЕНИ стойностите -->
+      <div class="sidebar-stat"><span>Duration</span><span>7 days</span></div>
+      <div class="sidebar-stat"><span>Best season</span><span>Oct – Mar</span></div>
+      <div class="sidebar-stat"><span>Currency</span><span>Indian Rupee</span></div>
+      <div class="sidebar-stat"><span>Visa</span><span>e-Visa required</span></div>
+      <div class="sidebar-stat"><span>Language</span><span>Hindi / English</span></div>
+      <div class="sidebar-stat"><span>Budget/day</span><span>€50 – €80</span></div>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>Highlights</h3>
+      <!-- ← СМЕНИ с твоите любими места -->
+      <ul class="sidebar-list">
+        <li>Mehrangarh Fort at sunset</li>
+        <li>Blue city rooftop views</li>
+        <li>Amber Fort elephant gate</li>
+        <li>Pushkar camel fair</li>
+        <li>Sam Sand Dunes overnight</li>
+      </ul>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>Don't miss</h3>
+      <!-- ← Добави лични препоръки -->
+      <ul class="sidebar-list">
+        <li>Chai at a dhaba at dawn</li>
+        <li>Fabric market in Jaipur old city</li>
+        <li>Sunset at Jal Mahal water palace</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <span>© Copyright 2024, All Rights Reserved — Sunlit Canvas</span>
+    <div class="footer-bottom-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms &amp; Conditions</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+
+
+/* ── Hamburger menu ── */
+(function() {
+  function initMenu() {
+    var ham = document.getElementById('ham');
+    var mobileNav = document.getElementById('mobileNav');
+    var mobileClose = document.getElementById('mobileClose');
+    if (!ham || !mobileNav) return;
+    ham.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      mobileNav.classList.add('open');
+    });
+    if (mobileClose) {
+      mobileClose.addEventListener('click', function() {
+        mobileNav.classList.remove('open');
+      });
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMenu);
+  } else {
+    initMenu();
+  }
+})();
+
+
+function closeMobile() { document.getElementById("mobileNav").classList.remove("open"); }
+</script>
+</body>
+</html>

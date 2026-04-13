@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Photo Gallery | Sunlit Canvas</title>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Palanquin:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.7.2/css/all.css"/>
+
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --dark:     #3B3030;
+  --accent:   #664343;
+  --accent-lt:#E4E0E1;
+  --white:    #ffffff;
+  --cream:    #EEE3CB;
+  --mist:     #6b6b6b;
+  --bg-foot:  #F8FBFB;
+  --ubuntu:   'Ubuntu', sans-serif;
+  --body:     'Palanquin', sans-serif;
+}
+
+html { font-size:16px; scroll-behavior:smooth; }
+body { font-family:var(--ubuntu); color:var(--dark); overflow-x:hidden; background:var(--white); }
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:1500;
+  padding:16px;
+  background:rgba(255,255,255,0.97);
+  backdrop-filter:blur(10px);
+  box-shadow:0 1px 0 rgba(59,48,48,.08);
+}
+.nav-inner {
+  max-width:1300px; margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-logo img { width:56px; height:56px; display:block; }
+.nav-links { display:flex; gap:0; list-style:none; }
+.nav-links a {
+  font-family:var(--ubuntu); font-size:16px; font-weight:400;
+  color:var(--dark); text-decoration:none; padding:5px 12px;
+  border-radius:25px; display:block; transition:background .2s;
+}
+.nav-links a:hover, .nav-links a.active { background:var(--accent-lt); color:var(--accent); }
+.nav-btn {
+  display:flex; align-items:center; gap:10px;
+  background:var(--accent); color:#fff; border:none;
+  padding:10px 24px; border-radius:25px; cursor:pointer;
+  font-family:var(--ubuntu); font-size:16px; font-weight:700;
+  text-decoration:none; transition:box-shadow .2s;
+}
+.nav-btn:hover { box-shadow:5px 5px 0 0 var(--dark); }
+.hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none; }
+.hamburger span { width:24px; height:2px; background:var(--dark); display:block; border-radius:2px; }
+.mobile-nav {
+  display:none; position:fixed; inset:0; z-index:2000;
+  background:var(--white); flex-direction:column;
+  align-items:center; justify-content:center; gap:1.5rem;
+}
+.mobile-nav.open { display:flex; }
+.mobile-nav a { font-family:var(--ubuntu); font-size:1.8rem; color:var(--dark); text-decoration:none; }
+.mobile-nav a:hover { color:var(--accent); }
+.mobile-close { position:absolute; top:1.5rem; right:1.5rem; font-size:2rem; background:none; border:none; cursor:pointer; color:var(--dark); font-weight:700; }
+
+/* ── PAGE HERO ── */
+.page-hero {
+  padding: 120px 16px 48px;
+  background: linear-gradient(45deg, #ffffff 46%, #EEE3CB 100%);
+  border-bottom: 1px solid rgba(59,48,48,.08);
+}
+.page-hero-inner {
+  max-width:1300px; margin:0 auto;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  flex-wrap:wrap; gap:16px;
+}
+.page-hero-label {
+  font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--mist); margin-bottom:8px;
+  display:flex; align-items:center; gap:10px;
+}
+.page-hero-label::before { content:''; width:28px; height:1px; background:var(--mist); display:block; }
+.page-hero-title {
+  font-family:var(--ubuntu); font-size:40px; font-weight:700;
+  color:var(--dark); line-height:1.1; letter-spacing:-.5px;
+}
+.page-hero-title em { font-style:italic; font-weight:300; color:var(--accent); }
+.page-hero-count {
+  font-family:var(--body); font-size:16px; color:var(--mist);
+  margin-top:8px;
+}
+.page-hero-count span {
+  font-family:var(--ubuntu); font-weight:700; color:var(--accent);
+}
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  background:var(--white);
+  border-bottom:1px solid rgba(59,48,48,.08);
+  padding:16px;
+  position:sticky; top:88px; z-index:100;
+}
+.filter-inner {
+  max-width:1300px; margin:0 auto;
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+}
+.filter-btn {
+  font-family:var(--ubuntu); font-size:13px; font-weight:400;
+  padding:6px 16px; border-radius:25px; cursor:pointer;
+  border:1.5px solid rgba(59,48,48,.2);
+  background:transparent; color:var(--dark);
+  transition:all .2s;
+}
+.filter-btn:hover { border-color:var(--accent); color:var(--accent); }
+.filter-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+/* ── GALLERY GRID ── */
+.gallery-wrap { max-width:1300px; margin:0 auto; padding:40px 16px 80px; }
+
+/* masonry-style with CSS columns */
+.masonry {
+  columns: 3;
+  column-gap: 16px;
+}
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  display: block;
+}
+.masonry-item img {
+  width:100%; display:block;
+  transition: transform .6s ease;
+}
+.masonry-item:hover img { transform:scale(1.04); }
+
+.masonry-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(59,48,48,.75) 0%, transparent 50%);
+  opacity:0; transition:opacity .35s;
+  display:flex; flex-direction:column;
+  justify-content:flex-end; padding:1.2rem;
+}
+.masonry-item:hover .masonry-overlay { opacity:1; }
+.masonry-loc {
+  font-family:var(--ubuntu); font-size:11px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(255,255,255,.7); margin-bottom:3px;
+}
+.masonry-name {
+  font-family:var(--ubuntu); font-size:1rem;
+  font-weight:700; color:#fff; margin-bottom:6px;
+}
+.masonry-tag {
+  position:absolute; top:.8rem; left:.8rem;
+  background:var(--accent); color:#fff;
+  font-family:var(--ubuntu); font-size:10px; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase;
+  padding:3px 10px; border-radius:25px;
+}
+.masonry-zoom {
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--ubuntu); font-size:11px; color:rgba(255,255,255,.8);
+  border:1px solid rgba(255,255,255,.4); padding:4px 10px; border-radius:25px;
+  width:fit-content;
+}
+
+/* hidden items */
+.masonry-item.hidden { display:none; }
+
+/* no results */
+.no-results {
+  text-align:center; padding:60px 0;
+  font-family:var(--body); font-size:18px; color:var(--mist);
+  display:none;
+}
+.no-results.show { display:block; }
+
+/* ── LIGHTBOX ── */
+.lightbox {
+  display:none; position:fixed; inset:0; z-index:3000;
+  background:rgba(20,16,16,.96);
+  flex-direction:column; align-items:center; justify-content:center;
+}
+.lightbox.open { display:flex; }
+.lb-img-wrap {
+  position:relative; max-width:90vw; max-height:80vh;
+  display:flex; align-items:center; justify-content:center;
+}
+.lb-img {
+  max-width:90vw; max-height:80vh;
+  object-fit:contain; display:block;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.lb-info {
+  margin-top:20px; text-align:center;
+}
+.lb-loc {
+  font-family:var(--ubuntu); font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:4px;
+}
+.lb-title {
+  font-family:var(--ubuntu); font-size:1.3rem; font-weight:700; color:#fff;
+}
+.lb-close {
+  position:absolute; top:20px; right:24px;
+  font-size:2rem; color:rgba(255,255,255,.6);
+  background:none; border:none; cursor:pointer;
+  transition:color .2s; line-height:1;
+}
+.lb-close:hover { color:#fff; }
+.lb-prev, .lb-next {
+  position:absolute; top:50%; transform:translateY(-50%);
+  font-size:1.4rem; color:rgba(255,255,255,.5);
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+  border-radius:50%; width:48px; height:48px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:all .2s;
+}
+.lb-prev { left:20px; }
+.lb-next { right:20px; }
+.lb-prev:hover, .lb-next:hover { background:rgba(255,255,255,.18); color:#fff; }
+.lb-counter {
+  position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
+  font-family:var(--ubuntu); font-size:12px; color:rgba(255,255,255,.4);
+  letter-spacing:.1em;
+}
+
+/* ── FOOTER ── */
+footer { background:var(--bg-foot); padding:30px 16px; border-top:1px solid rgba(59,48,48,.08); }
+.footer-bottom {
+  max-width:1300px; margin:0 auto;
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:10px;
+  font-family:var(--ubuntu); font-size:14px; color:#444;
+}
+.footer-bottom a { color:inherit; text-decoration:none; }
+.footer-bottom a:hover { color:var(--accent); }
+.footer-bottom-links { display:flex; gap:20px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:960px) {
+  .nav-links, .nav-btn { display:none; }
+  .hamburger { display:flex; }
+  .masonry { columns:2; }
+  .page-hero-title { font-size:28px; }
+}
+@media (max-width:500px) {
+  .masonry { columns:1; }
+}
+
+/* ── Mobile nav z-index fix ── */
+nav { z-index:1600 !important; }
+.mobile-nav { z-index:3000 !important; }
+.hamburger { z-index:1700 !important; position:relative !important; cursor:pointer !important; }
+.nav-mobile-right { z-index:1700 !important; position:relative !important; }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="https://res.cloudinary.com/dbyioi2qq/q_auto/v1716326701/static/sunlitcanvaslogosvg_1716326700_53038.svg" alt="Sunlit Canvas">
+    </a>
+    <ul class="nav-links">
+    <li><a href="gallery.html">Photo Gallery</a></li>
+      <li><a href="blog.html">Stories & Guides</a></li>
+      <li><a href="#">Shop Prints</a></li>
+    </ul>
+    <a href="map.html" class="nav-btn"><i class="fas fa-map"></i> Interactive map</a>
+    <button type="button" class="hamburger" id="ham" onclick="document.getElementById('mobileNav').classList.add('open')"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button type="button" class="mobile-close" id="mobileClose" onclick="document.getElementById('mobileNav').classList.remove('open')">✕</button>
+  <a href="gallery.html" onclick="closeMobile()">Photo Gallery</a>
+  <a href="blog.html" onclick="closeMobile()">Stories &amp; Guides</a>
+  <a href="#" onclick="closeMobile()">Shop Prints</a>
+  <a href="map.html" class="nav-btn" onclick="closeMobile()"><i class="fas fa-map"></i> Interactive map</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div>
+      <p class="page-hero-label">Moments I Never Wanted to Forget</p>
+      <h1 class="page-hero-title">Some seconds pass quickly, <em> these are the ones I chose to keep.</em></h1>
+      <p class="page-hero-count">Showing <span id="visible-count">18</span> of <span id="total-count">18</span> photos</p>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-inner">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="Europe">Europe</button>
+    <button class="filter-btn" data-filter="Asia">Asia</button>
+    <button class="filter-btn" data-filter="Africa">Africa</button>
+    <button class="filter-btn" data-filter="Americas">Americas</button>
+    <button class="filter-btn" data-filter="Oceania">Oceania</button>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<div class="gallery-wrap">
+  <div class="masonry" id="gallery">
+    <!-- снимките се генерират динамично от photos[] в JS -->
+  </div>
+</div>
+<!-- LIGHTBOX -->
+<div id="lightbox" class="lightbox">
+  <button id="lbClose" class="lb-close">✕</button>
+  <button id="lbPrev" class="lb-nav lb-prev"><i class="fas fa-chevron-left"></i></button>
+  <button id="lbNext" class="lb-nav lb-next"><i class="fas fa-chevron-right"></i></button>
+  <div class="lb-content">
+    <img id="lbImg" src="" alt="" class="lb-img">
+    <div class="lb-info">
+      <p id="lbLoc" class="lb-loc"></p>
+      <p id="lbTitle" class="lb-title"></p>
+      <p id="lbCounter" class="lb-counter"></p>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ── Mobile menu ── */
+
+
+/* ═══════════════════════════════════════════════════
+   ТВОИТЕ СНИМКИ — добавяй тук
+   src: "images/filename.jpg"
+   cat: Europe / Asia / Africa / Americas / Oceania
+   loc: "City · Country"
+   name: "Заглавие на снимката"
+═══════════════════════════════════════════════════ */
+const photos = [
+  { src:"images/placeholder-01.jpg", cat:"Europe",   loc:"Sofia · Bulgaria",    name:"Home" },
+  { src:"images/placeholder-02.jpg", cat:"Europe",   loc:"Rome · Italy",        name:"The Eternal City" },
+  { src:"images/lionhead.heic", cat:"Asia",     loc:"Guangzhou · China",   name:"Lion Heads" },
+  { src:"images/placeholder-04.jpg", cat:"Asia",     loc:"Bangkok · Thailand",  name:"Temple Light" },
+  { src:"images/placeholder-05.jpg", cat:"Europe",   loc:"Corfu · Greece",      name:"Ionian Blue" },
+  { src:"images/placeholder-06.jpg", cat:"Asia",     loc:"Ao Nang · Thailand",  name:"Limestone Giants" },
+  { src:"images/placeholder-07.jpg", cat:"Europe",   loc:"Dubrovnik · Croatia", name:"Pearl of the Adriatic" },
+  { src:"images/placeholder-08.jpg", cat:"Americas", loc:"New York · USA",      name:"City Grid" },
+  { src:"images/placeholder-09.jpg", cat:"Asia",     loc:"Singapore",           name:"Garden City" },
+  { src:"images/placeholder-10.jpg", cat:"Europe",   loc:"Hallstatt · Austria", name:"Mountain Mirror" },
+  { src:"images/placeholder-11.jpg", cat:"Asia",     loc:"Petra · Jordan",      name:"Rose Red City" },
+  { src:"images/placeholder-12.jpg", cat:"Europe",   loc:"Paris · France",      name:"Golden Hour" },
+  /* ← ДОБАВЯЙ НОВИ СНИМКИ ТУК */
+];
+
+const galleryEl   = document.getElementById('gallery');
+const totalCount  = document.getElementById('total-count');
+const visibleCount= document.getElementById('visible-count');
+let activeFilter  = 'all';
+let allItems      = [];
+let refreshTimer  = null;
+
+/* Build masonry from photos array */
+function buildGallery(filter) {
+  const filtered = filter === 'all' ? photos : photos.filter(p => p.cat === filter);
+  galleryEl.innerHTML = '';
+  allItems = [];
+  filtered.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'masonry-item';
+    div.dataset.cat  = p.cat;
+    div.dataset.loc  = p.loc;
+    div.dataset.name = p.name;
+    div.style.opacity    = '0';
+    div.style.transition = 'opacity 0.5s ease';
+    div.innerHTML = `
+      <span class="masonry-tag">${p.cat}</span>
+      <img src="${p.src}" alt="${p.name}" loading="lazy" onerror="this.style.opacity='0'">
+      <div class="masonry-overlay">
+        <p class="masonry-loc">${p.loc}</p>
+        <p class="masonry-name">${p.name}</p>
+        <span class="masonry-zoom"><i class="fas fa-expand"></i> View</span>
+      </div>`;
+    div.addEventListener('click', () => {
+      const vis = allItems.filter(el => !el.classList.contains('hidden'));
+      openLightbox(vis.indexOf(div));
+    });
+    galleryEl.appendChild(div);
+    allItems.push(div);
+    setTimeout(() => { div.style.opacity = '1'; }, i * 50);
+  });
+  if (totalCount)  totalCount.textContent  = photos.length;
+  if (visibleCount)visibleCount.textContent = filtered.length;
+}
+
+/* Filter buttons */
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    buildGallery(activeFilter);
+  });
+});
+
+/* Random fade refresh every 8s — only on All */
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function startRefresh() {
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(() => {
+    if (activeFilter !== 'all') return;
+    const shuffled = shuffleArray(photos);
+    allItems.forEach(el => { el.style.opacity = '0'; });
+    setTimeout(() => {
+      allItems.forEach((el, i) => {
+        const p = shuffled[i % shuffled.length];
+        el.querySelector('img').src = p.src;
+        el.querySelector('.masonry-loc').textContent  = p.loc;
+        el.querySelector('.masonry-name').textContent = p.name;
+        el.querySelector('.masonry-tag').textContent  = p.cat;
+        el.dataset.cat = p.cat; el.dataset.loc = p.loc; el.dataset.name = p.name;
+        setTimeout(() => { el.style.opacity = '1'; }, i * 40);
+      });
+    }, 500);
+  }, 8000);
+}
+
+buildGallery('all');
+startRefresh();
+
+/* ── Lightbox ── */
+let currentIndex = 0;
+let visibleItems = [];
+
+function openLightbox(index) {
+  visibleItems = allItems.filter(i => !i.classList.contains('hidden'));
+  currentIndex = index;
+  showLightboxItem(currentIndex);
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function showLightboxItem(idx) {
+  const item = visibleItems[idx];
+  const img = item.querySelector('img');
+  document.getElementById('lbImg').src = img.src.replace('w=800', 'w=1600');
+  document.getElementById('lbLoc').textContent = item.dataset.loc;
+  document.getElementById('lbTitle').textContent = item.dataset.name;
+  document.getElementById('lbCounter').textContent = (idx + 1) + ' / ' + visibleItems.length;
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* click handlers set in buildGallery */
+
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbPrev').addEventListener('click', () => {
+  currentIndex = (currentIndex - 1 + visibleItems.length) % visibleItems.length;
+  showLightboxItem(currentIndex);
+});
+document.getElementById('lbNext').addEventListener('click', () => {
+  currentIndex = (currentIndex + 1) % visibleItems.length;
+  showLightboxItem(currentIndex);
+});
+
+/* keyboard navigation */
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') { currentIndex = (currentIndex - 1 + visibleItems.length) % visibleItems.length; showLightboxItem(currentIndex); }
+  if (e.key === 'ArrowRight') { currentIndex = (currentIndex + 1) % visibleItems.length; showLightboxItem(currentIndex); }
+});
+
+/* close on backdrop click */
+document.getElementById('lightbox').addEventListener('click', e => {
+  if (e.target === document.getElementById('lightbox')) closeLightbox();
+});
+
+/* ── Hamburger menu ── */
+(function() {
+  function initMenu() {
+    var ham = document.getElementById('ham');
+    var mobileNav = document.getElementById('mobileNav');
+    var mobileClose = document.getElementById('mobileClose');
+    if (!ham || !mobileNav) return;
+    ham.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      mobileNav.classList.add('open');
+    });
+    if (mobileClose) {
+      mobileClose.addEventListener('click', function() {
+        mobileNav.classList.remove('open');
+      });
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMenu);
+  } else {
+    initMenu();
+  }
+})();
+
+
+function closeMobile() { document.getElementById("mobileNav").classList.remove("open"); }
+</script>
+</body>
+</html>
