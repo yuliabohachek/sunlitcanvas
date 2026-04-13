@@ -2,12 +2,12 @@ backend:
   name: github
   repo: yuliabohachek/sunlitcanvas
   branch: main
-  auth_type: implicit
-  app_id: Ov23liKwdoP4jfzIZmOG
-
+  base_url: https://cms-oauth.yuliabohachek.workers.dev
+  auth_endpoint: /auth
+ 
 media_folder: "images"
 public_folder: "images"
-
+ 
 collections:
   - name: "stories"
     label: "Travel Stories"
@@ -19,7 +19,7 @@ collections:
           - { label: "Cover Tag", name: "cover_tag", widget: "string" }
           - { label: "Cover Title", name: "cover_title", widget: "string" }
           - { label: "Cover Subtitle", name: "cover_subtitle", widget: "text" }
-
+ 
   - name: "pages"
     label: "Pages"
     files:
@@ -31,3 +31,4 @@ collections:
           - { label: "Hero Body", name: "hero_body", widget: "text" }
           - { label: "About Quote", name: "about_quote", widget: "text" }
           - { label: "About Body", name: "about_body", widget: "text" }
+ 
