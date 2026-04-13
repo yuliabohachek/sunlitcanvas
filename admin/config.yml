@@ -1,9 +1,9 @@
 backend:
   name: github
-  repo: yuliabohachek/sunlit-canvas
+  repo: yuliabohachek/sunlitcanvas
   branch: main
-  base_url: https://api.cloudflare.com
-  auth_endpoint: /client/v4/pages/oauth
+  base_url: https://cms-oauth.yuliabohachek.workers.dev
+  auth_endpoint: /callback
 
 media_folder: "images"
 public_folder: "images"
@@ -16,7 +16,7 @@ collections:
         label: "Hong Kong — Meeting point?"
         file: "hong-kong.html"
         fields:
-          - { label: "Cover Tag", name: "cover_tag", widget: "string", default: "Asia · Hong Kong" }
+          - { label: "Cover Tag", name: "cover_tag", widget: "string" }
           - { label: "Cover Title", name: "cover_title", widget: "string" }
           - { label: "Cover Subtitle", name: "cover_subtitle", widget: "text" }
 
