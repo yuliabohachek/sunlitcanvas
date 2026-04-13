@@ -3,7 +3,7 @@ backend:
   repo: yuliabohachek/sunlitcanvas
   branch: main
   auth_type: implicit
-  app_id: YOUR_GITHUB_CLIENT_ID
+  app_id: Ov23liKwdoP4jfzIZmOG
 
 media_folder: "images"
 public_folder: "images"
