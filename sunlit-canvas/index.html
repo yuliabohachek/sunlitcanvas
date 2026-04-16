@@ -584,13 +584,9 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
-  /* Всяка снимка заема точно 1/4 от ширината на екрана */
   width: 25vw;
   height: calc(25vw * 1.15);
-  background: #1a1a1a;
-  box-shadow:
-    inset 0  14px 0 #3B3030,
-    inset 0 -14px 0 #3B3030;
+  background: #3B3030;
   opacity: 0;
   transform: translateY(10px);
   transition: opacity .6s ease, transform .6s ease;
@@ -599,31 +595,33 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
   opacity: 1;
   transform: translateY(0);
 }
-.film-frame::before,
-.film-frame::after {
-  content: '';
+/* Перфорации — отделни div-ове за надеждност */
+.film-perf-top,
+.film-perf-bot {
   position: absolute;
   left: 0; right: 0;
   height: 14px;
-  z-index: 3;
+  z-index: 4;
   pointer-events: none;
+  background-color: #3B3030;
   background-image: repeating-linear-gradient(
     to right,
     transparent 0px, transparent 5px,
-    rgba(59,48,48,.95) 5px, rgba(59,48,48,.95) 14px
+    rgba(0,0,0,.55) 5px, rgba(0,0,0,.55) 14px
   );
 }
-.film-frame::before { top: 0; }
-.film-frame::after  { bottom: 0; }
+.film-perf-top { top: 0; }
+.film-perf-bot { bottom: 0; }
 
 .film-frame img {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
+  background: #3B3030;
   pointer-events: none;
   user-select: none;
-  filter: brightness(.88) saturate(.95);
+  filter: brightness(.92) saturate(.95);
   transition: transform .55s ease, filter .45s ease;
 }
 .film-frame:hover img {
@@ -816,6 +814,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
     <div class="film-outer">
       <div class="film-track" id="fnTrack">
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/malta-valletta-01.jpg" alt="Valletta" loading="lazy">
           <div class="film-hover">
             <p class="film-place">Malta</p>
@@ -823,6 +823,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/malta-valletta-02.jpg" alt="Golden Streets" loading="lazy">
           <div class="film-hover">
             <p class="film-place">Malta</p>
@@ -830,6 +832,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/malta-valletta-03.jpg" alt="Malta Light" loading="lazy">
           <div class="film-hover">
             <p class="film-place">Malta</p>
@@ -837,6 +841,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/greece-nea-iraklitsa-01.jpg" alt="Aegean Summer" loading="lazy">
           <div class="film-hover">
             <p class="film-place">Greece</p>
@@ -844,6 +850,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/greece-nea-iraklitsa-02.jpg" alt="Greek Light" loading="lazy">
           <div class="film-hover">
             <p class="film-place">Greece</p>
@@ -851,6 +859,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/philippines-coron-01.jpg" alt="Coron" loading="lazy">
           <div class="film-hover">
             <p class="film-place">Philippines</p>
@@ -858,6 +868,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/philippines-coron-02.jpg" alt="Island Life" loading="lazy">
           <div class="film-hover">
             <p class="film-place">Philippines</p>
@@ -865,6 +877,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/philippines-coron-03.jpg" alt="Philippine Waters" loading="lazy">
           <div class="film-hover">
             <p class="film-place">Philippines</p>
@@ -872,6 +886,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/philippines-coron-04.jpg" alt="Coron at Dawn" loading="lazy">
           <div class="film-hover">
             <p class="film-place">Philippines</p>
@@ -879,6 +895,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/philippines-balabac-drone.jpg" alt="Above Balabac" loading="lazy">
           <div class="film-hover">
             <p class="film-place">Philippines</p>
@@ -886,6 +904,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/philippines-onuk-drone.jpg" alt="Onuk from Above" loading="lazy">
           <div class="film-hover">
             <p class="film-place">Philippines</p>
@@ -893,6 +913,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/shenzhen-01.jpg" alt="City of Tomorrow" loading="lazy">
           <div class="film-hover">
             <p class="film-place">China</p>
@@ -900,6 +922,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/shenzhen-02.jpg" alt="Shenzhen Skyline" loading="lazy">
           <div class="film-hover">
             <p class="film-place">China</p>
@@ -907,6 +931,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/shenzhen-03.jpg" alt="Shenzhen Dusk" loading="lazy">
           <div class="film-hover">
             <p class="film-place">China</p>
@@ -914,6 +940,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/shenzhen-04.jpg" alt="Shenzhen Moments" loading="lazy">
           <div class="film-hover">
             <p class="film-place">China</p>
@@ -921,6 +949,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/shenzhen-05.jpg" alt="Urban China" loading="lazy">
           <div class="film-hover">
             <p class="film-place">China</p>
@@ -928,6 +958,8 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           </div>
         </div>
         <div class="film-frame">
+          <div class="film-perf-top"></div>
+          <div class="film-perf-bot"></div>
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/china-beijing-lionheads.jpg" alt="Lion Heads" loading="lazy">
           <div class="film-hover">
             <p class="film-place">China</p>
@@ -1264,6 +1296,71 @@ function animateCounter(el, target, duration) {
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
   frames.forEach(f => obs.observe(f));
+})();
+
+
+/* ── Featured destinations — динамична смяна ── */
+(function() {
+  const pool = [
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/philippines-onuk-drone.jpg',   loc:'Onuk Island · Philippines', name:'Onuk from Above',    cat:'Asia'   },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/philippines-coron-01.jpg',     loc:'Coron · Philippines',       name:'Coron',              cat:'Asia'   },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/philippines-coron-03.jpg',     loc:'Coron · Philippines',       name:'Philippine Waters',  cat:'Asia'   },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/philippines-balabac-drone.jpg',loc:'Balabac · Philippines',     name:'Above Balabac',      cat:'Asia'   },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/malta-valletta-01.jpg',        loc:'Valletta · Malta',          name:'Golden City',        cat:'Europe' },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/malta-valletta-02.jpg',        loc:'Valletta · Malta',          name:'Valletta Streets',   cat:'Europe' },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/malta-valletta-03.jpg',        loc:'Valletta · Malta',          name:'Malta Light',        cat:'Europe' },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/greece-nea-iraklitsa-01.jpg',  loc:'Nea Iraklitsa · Greece',   name:'Aegean Summer',      cat:'Europe' },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/greece-nea-iraklitsa-02.jpg',  loc:'Nea Iraklitsa · Greece',   name:'Greek Light',        cat:'Europe' },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/shenzhen-01.jpg',              loc:'Shenzhen · China',          name:'City of Tomorrow',   cat:'Asia'   },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/shenzhen-02.jpg',              loc:'Shenzhen · China',          name:'Shenzhen Skyline',   cat:'Asia'   },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/shenzhen-03.jpg',              loc:'Shenzhen · China',          name:'Shenzhen Dusk',      cat:'Asia'   },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/china-beijing-lionheads.jpg',  loc:'Beijing · China',           name:'Lion Heads',         cat:'Asia'   },
+  ];
+
+  const pcs = Array.from(document.querySelectorAll('.photo-grid .pc'));
+  if (!pcs.length) return;
+
+  // Разбъркване
+  function shuffle(a) {
+    const arr = [...a];
+    for (let i = arr.length-1; i > 0; i--) {
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr;
+  }
+
+  let queue = shuffle(pool);
+  let qi = 0;
+
+  function nextPhoto() {
+    // Избираме pc извън viewport-а или random
+    const offscreen = pcs.filter(pc => {
+      const r = pc.getBoundingClientRect();
+      return r.bottom < 0 || r.top > window.innerHeight;
+    });
+    const target = offscreen.length ? offscreen[Math.floor(Math.random()*offscreen.length)] : pcs[Math.floor(Math.random()*pcs.length)];
+
+    const p = queue[qi % queue.length];
+    qi++;
+    if (qi >= queue.length) { queue = shuffle(pool); qi = 0; }
+
+    target.style.opacity = '0';
+    target.style.transition = 'opacity .5s ease';
+    setTimeout(() => {
+      const img = target.querySelector('img');
+      const loc = target.querySelector('.pc-loc');
+      const name = target.querySelector('.pc-name');
+      const tag = target.querySelector('.pc-tag');
+      if (img)  img.src = p.src;
+      if (loc)  loc.textContent = p.loc;
+      if (name) name.textContent = p.name;
+      if (tag)  tag.textContent = p.cat;
+      target.style.opacity = '1';
+    }, 500);
+  }
+
+  setInterval(nextPhoto, 6000);
 })();
 
 </script>
