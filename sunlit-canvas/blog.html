@@ -94,14 +94,29 @@ nav {
 
 /* FEATURED */
 .featured-article {
-  display:grid; grid-template-columns:1.4fr 1fr;
+  display:grid; grid-template-columns:auto 1fr;
   gap:48px; align-items:center;
   margin-bottom:56px; padding-bottom:56px;
   border-bottom:1px solid rgba(59,48,48,.1);
 }
-.featured-img { position:relative; overflow:hidden; aspect-ratio:4/3; }
+.featured-img {
+  position: relative;
+  width: 260px;
+  flex-shrink: 0;
+}
+.featured-img-oval {
+  width: 100%;
+  aspect-ratio: 2/3;
+  border-radius: 360px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,.22);
+  animation: articleKenBurns 14s ease-in-out infinite alternate;
+  background-size: 110%;
+  background-position: 50% 40%;
+  background-repeat: no-repeat;
+}
+.featured-article:hover .featured-img-oval { background-size: 120%; }
 .featured-img img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .7s ease; }
-.featured-article:hover .featured-img img { transform:scale(1.03); }
 .featured-tag {
   position:absolute; top:1rem; left:1rem;
   background:var(--accent); color:#fff;
@@ -123,218 +138,113 @@ nav {
 }
 .read-btn:hover { box-shadow:4px 4px 0 0 var(--dark); }
 
-/* ══════════════════════════════════════════
-   FIELD NOTES — filmstrip лента
-══════════════════════════════════════════ */
-.field-notes {
-  margin-bottom: 56px;
-  padding-bottom: 56px;
-  border-bottom: 1px solid rgba(59,48,48,.1);
-}
-
-.field-notes-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.field-notes-label {
-  font-size: 11px;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--accent);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-.field-notes-label::before {
-  content: '';
-  width: 20px;
-  height: 1px;
-  background: var(--accent);
-  display: block;
-}
-
-.field-notes-title {
-  font-family: var(--ubuntu);
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--dark);
-  letter-spacing: -.2px;
-}
-
-.field-notes-desc {
-  font-family: var(--body);
-  font-size: 14px;
-  color: var(--mist);
-  margin-top: 4px;
-}
-
-.filmstrip-nav {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.filmstrip-arrow {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(59,48,48,.2);
-  background: transparent;
-  color: var(--dark);
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px;
-  transition: all .2s;
-  flex-shrink: 0;
-}
-.filmstrip-arrow:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
-/* Лентата */
-.filmstrip-outer {
-  position: relative;
-  overflow: hidden;
-}
-
-/* Fade edges */
-.filmstrip-outer::before,
-.filmstrip-outer::after {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 60px;
-  z-index: 2;
-  pointer-events: none;
-}
-.filmstrip-outer::before {
-  left: 0;
-  background: linear-gradient(to right, #fff, transparent);
-}
-.filmstrip-outer::after {
-  right: 0;
-  background: linear-gradient(to left, #fff, transparent);
-}
-
-.filmstrip-track {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding: 4px 60px 12px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  cursor: grab;
-}
-.filmstrip-track:active { cursor: grabbing; }
-.filmstrip-track::-webkit-scrollbar { display: none; }
-
-/* Всяка снимка */
-.film-frame {
-  flex-shrink: 0;
-  position: relative;
-  overflow: hidden;
-  border-radius: 4px;
-  /* портретни — по-тесни, пейзажни — по-широки */
-  height: 220px;
-  width: auto;
-  aspect-ratio: auto;
-  background: var(--accent-lt);
-}
-
-.film-frame img {
-  height: 220px;
-  width: auto;
-  display: block;
-  object-fit: cover;
-  transition: transform .5s ease;
-  pointer-events: none;
-  user-select: none;
-}
-
-.film-frame:hover img { transform: scale(1.05); }
-
-/* Hover overlay с локация */
-.film-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(59,48,48,.82) 0%, transparent 55%);
-  opacity: 0;
-  transition: opacity .3s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 14px;
-}
-.film-frame:hover .film-overlay { opacity: 1; }
-
-.film-loc {
-  font-family: var(--ubuntu);
-  font-size: 10px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.7);
-  margin-bottom: 3px;
-}
-.film-name {
-  font-family: var(--ubuntu);
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-}
-
-/* Перфорации отгоре и отдолу — filmstrip ефект */
-.film-frame::before,
-.film-frame::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0;
-  height: 10px;
-  z-index: 3;
-  pointer-events: none;
-  background-image: repeating-linear-gradient(
-    to right,
-    transparent 0px,
-    transparent 6px,
-    rgba(0,0,0,.25) 6px,
-    rgba(0,0,0,.25) 14px
-  );
-}
-.film-frame::before { top: 0; }
-.film-frame::after  { bottom: 0; }
-
 /* ── ARTICLES GRID ── */
-.articles-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
-.article-card { cursor:pointer; }
+/* ── Editorial strip ── */
+.articles-grid {
+  border-top: 1px solid rgba(59,48,48,.12);
+}
+.article-card {
+  display: grid;
+  grid-template-columns: 52px 100px 1fr auto;
+  align-items: center;
+  gap: 24px;
+  padding: 22px 0;
+  border-bottom: 1px solid rgba(59,48,48,.08);
+  cursor: pointer;
+  transition: background .2s, padding .18s;
+}
 .article-card.hidden { display:none; }
-.article-img { overflow:hidden; aspect-ratio:3/2; margin-bottom:16px; position:relative; }
-.article-img img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .6s ease; }
-.article-card:hover .article-img img { transform:scale(1.04); }
-.article-type {
-  position:absolute; top:.7rem; left:.7rem;
-  font-family:var(--ubuntu); font-size:10px; font-weight:700;
-  letter-spacing:.1em; text-transform:uppercase;
-  padding:3px 10px; border-radius:25px; color:#fff;
+.article-card:hover {
+  background: #faf8f5;
+  padding-left: 8px; padding-right: 8px;
+  margin: 0 -8px;
 }
-.type-story { background:var(--accent); }
-.type-guide { background:var(--dark); }
-.article-cat { font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:6px; display:block; }
+/* номер */
+.article-num {
+  font-family: var(--ubuntu); font-size: 2rem; font-weight: 700;
+  color: rgba(59,48,48,.1); line-height: 1; letter-spacing: -2px;
+  transition: color .2s; user-select: none; text-align: center;
+}
+.article-card:hover .article-num { color: rgba(215,65,167,.2); }
+/* малка елипса */
+.article-img {
+  width: 80px; height: 104px;
+  border-radius: 360px;
+  overflow: hidden;
+  border: 2.5px solid rgba(59,48,48,.15);
+  transition: border-color .3s, transform .3s;
+  position: relative;
+  flex-shrink: 0;
+}
+.article-card:hover .article-img {
+  border-color: #D741A7;
+  transform: translateY(-3px);
+}
+.article-photo {
+  position: absolute; inset: 0;
+  border-radius: 360px;
+  background-size: 110%;
+  background-position: 50% 40%;
+  background-repeat: no-repeat;
+  animation: articleKenBurns 14s ease-in-out infinite alternate;
+}
+@keyframes articleKenBurns {
+  0%   { background-size:110%; background-position:50% 40%; }
+  100% { background-size:120%; background-position:50% 60%; }
+}
+.article-frame { display: none; }
+.article-type { display: none; }
+/* текст */
+.article-cat {
+  font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 5px; display: block;
+}
 .article-title {
-  font-family:var(--ubuntu); font-size:1.05rem; font-weight:700;
-  color:var(--dark); line-height:1.3; margin-bottom:8px;
-  text-decoration:none; display:block; transition:color .2s;
+  font-family: var(--ubuntu); font-size: 1rem; font-weight: 700;
+  color: var(--dark); line-height: 1.3; margin-bottom: 5px;
+  text-decoration: none; display: block; transition: color .2s;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.article-title:hover { color:var(--accent); }
-.article-excerpt { font-family:var(--body); font-size:14px; color:var(--mist); line-height:1.7; margin-bottom:10px; }
-.article-meta { font-family:var(--ubuntu); font-size:11px; color:rgba(107,107,107,.6); display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--accent-lt); padding-top:10px; margin-top:10px; }
-.article-link { color:var(--dark); text-decoration:none; font-size:11px; border-bottom:1px solid transparent; transition:all .2s; }
-.article-link:hover { color:var(--accent); border-color:var(--accent); }
+.article-card:hover .article-title { color: var(--accent); }
+.article-excerpt {
+  font-family: var(--body); font-size: 13px; color: var(--mist);
+  line-height: 1.6; margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+/* мета вдясно */
+.article-meta {
+  text-align: right; flex-shrink: 0;
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: 7px;
+  border: none; padding: 0; margin: 0;
+}
+.article-type-badge {
+  font-family: var(--ubuntu); font-size: 10px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 25px; color: #fff;
+}
+.badge-story { background: var(--accent); }
+.badge-guide { background: var(--dark); }
+.article-time {
+  font-family: var(--ubuntu); font-size: 11px;
+  color: rgba(107,107,107,.6);
+}
+.article-link {
+  font-family: var(--ubuntu); color: var(--dark); text-decoration: none;
+  font-size: 11px; border-bottom: 1px solid transparent;
+  transition: all .2s; white-space: nowrap;
+}
+.article-card:hover .article-link { color: #D741A7; border-color: #D741A7; }
+
+@media (max-width:960px) {
+  .article-card { grid-template-columns: 40px 90px 1fr; }
+  .article-meta { display: none; }
+}
+@media (max-width:500px) {
+  .article-card { grid-template-columns: 36px 1fr; gap: 14px; }
+  .article-img { display: none; }
+}
 
 /* ── FOOTER ── */
 footer { background:var(--bg-foot); padding:30px 16px; border-top:1px solid rgba(59,48,48,.08); }
@@ -393,7 +303,7 @@ footer { background:var(--bg-foot); padding:30px 16px; border-top:1px solid rgba
   <div class="page-hero-inner">
     <div>
       <p class="page-hero-label">Stories & Guides</p>
-      <h1 class="page-hero-title">Travel through <em>words & images</em></h1>
+      <h1 class="page-hero-title">Travel through <em style="color:#D741A7;">words & images</em></h1>
     </div>
   </div>
 </div>
@@ -417,8 +327,9 @@ footer { background:var(--bg-foot); padding:30px 16px; border-top:1px solid rgba
   <!-- FEATURED -->
   <div class="featured-article" data-cat="Asia" data-type="story">
     <div class="featured-img">
-      <span class="featured-tag">Travel Story</span>
-      <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=900&q=80" alt="Hong Kong">
+      <div class="featured-img-oval" style="background-image:url('https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_700/philippines-coron-01.jpg')">
+        <span class="featured-tag" style="position:absolute;top:1rem;left:1rem;z-index:2;">Travel Story</span>
+      </div>
     </div>
     <div>
       <p class="featured-label">Asia · Hong Kong</p>
@@ -432,235 +343,111 @@ footer { background:var(--bg-foot); padding:30px 16px; border-top:1px solid rgba
     </div>
   </div>
 
-  <!-- ══ FIELD NOTES FILMSTRIP ══ -->
-  <div class="field-notes">
-    <div class="field-notes-header">
-      <div>
-        <p class="field-notes-label">Phone · Unfiltered</p>
-        <h2 class="field-notes-title">Field Notes</h2>
-        <p class="field-notes-desc">Raw moments from the road — no tripod, no golden hour, no plan.</p>
-      </div>
-      <div class="filmstrip-nav">
-        <button class="filmstrip-arrow" id="filmPrev"><i class="fas fa-chevron-left"></i></button>
-        <button class="filmstrip-arrow" id="filmNext"><i class="fas fa-chevron-right"></i></button>
-      </div>
-    </div>
 
-    <div class="filmstrip-outer">
-      <div class="filmstrip-track" id="filmTrack">
-
-        <!-- ══ СНИМКИТЕ — замени src с Cloudinary линкове ══
-             Формат: src="https://res.cloudinary.com/CLOUD_NAME/image/upload/FILENAME.jpg"
-        ══════════════════════════════════════════════════ -->
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/malta-valletta-01.jpg" alt="Valletta">
-          <div class="film-overlay">
-            <p class="film-loc">Malta</p>
-            <p class="film-name">Valletta</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/malta-valletta-02.jpg" alt="Valletta Streets">
-          <div class="film-overlay">
-            <p class="film-loc">Malta</p>
-            <p class="film-name">Valletta Streets</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/malta-valletta-03.jpg" alt="Malta Light">
-          <div class="film-overlay">
-            <p class="film-loc">Malta</p>
-            <p class="film-name">Malta Light</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/greece-nea-iraklitsa-01.jpg" alt="Aegean Summer">
-          <div class="film-overlay">
-            <p class="film-loc">Nea Iraklitsa · Greece</p>
-            <p class="film-name">Aegean Summer</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/greece-nea-iraklitsa-02.jpg" alt="Greek Light">
-          <div class="film-overlay">
-            <p class="film-loc">Nea Iraklitsa · Greece</p>
-            <p class="film-name">Greek Light</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/philippines-coron-01.jpg" alt="Coron">
-          <div class="film-overlay">
-            <p class="film-loc">Coron · Philippines</p>
-            <p class="film-name">Coron</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/philippines-coron-02.jpg" alt="Island Life">
-          <div class="film-overlay">
-            <p class="film-loc">Coron · Philippines</p>
-            <p class="film-name">Island Life</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/philippines-coron-03.jpg" alt="Philippine Waters">
-          <div class="film-overlay">
-            <p class="film-loc">Coron · Philippines</p>
-            <p class="film-name">Philippine Waters</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/philippines-coron-04.jpg" alt="Coron at Dawn">
-          <div class="film-overlay">
-            <p class="film-loc">Coron · Philippines</p>
-            <p class="film-name">Coron at Dawn</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/shenzhen-01.jpg" alt="City of Tomorrow">
-          <div class="film-overlay">
-            <p class="film-loc">Shenzhen · China</p>
-            <p class="film-name">City of Tomorrow</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/shenzhen-02.jpg" alt="Shenzhen Skyline">
-          <div class="film-overlay">
-            <p class="film-loc">Shenzhen · China</p>
-            <p class="film-name">Shenzhen Skyline</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/shenzhen-03.jpg" alt="Shenzhen Dusk">
-          <div class="film-overlay">
-            <p class="film-loc">Shenzhen · China</p>
-            <p class="film-name">Shenzhen Dusk</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/shenzhen-04.jpg" alt="Shenzhen Moments">
-          <div class="film-overlay">
-            <p class="film-loc">Shenzhen · China</p>
-            <p class="film-name">Shenzhen Moments</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/shenzhen-05.jpg" alt="Urban China">
-          <div class="film-overlay">
-            <p class="film-loc">Shenzhen · China</p>
-            <p class="film-name">Urban China</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/china-beijing-lionheads.jpg" alt="Lion Heads">
-          <div class="film-overlay">
-            <p class="film-loc">Beijing · China</p>
-            <p class="film-name">Lion Heads</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/philippines-balabac-drone.jpg" alt="Above Balabac">
-          <div class="film-overlay">
-            <p class="film-loc">Balabac · Philippines</p>
-            <p class="film-name">Above Balabac</p>
-          </div>
-        </div>
-
-        <div class="film-frame">
-          <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,h_440/philippines-onuk-drone.jpg" alt="Onuk from Above">
-          <div class="film-overlay">
-            <p class="film-loc">Onuk Island · Philippines</p>
-            <p class="film-name">Onuk from Above</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-  <!-- ══ END FIELD NOTES ══ -->
 
   <!-- ARTICLES GRID -->
   <div class="articles-grid" id="articlesGrid">
 
     <div class="article-card" data-cat="Europe" data-type="story">
+      <div class="article-num">01</div>
       <div class="article-img">
-        <span class="article-type type-story">Travel Story</span>
-        <img src="https://images.unsplash.com/photo-1531761535209-180857e963b9?w=700&q=75" alt="Crete">
+        <div class="article-photo" style="background-image:url('https://images.unsplash.com/photo-1531761535209-180857e963b9?w=700&q=75')"></div>
       </div>
-      <span class="article-cat">Europe · Greece</span>
-      <a href="#" class="article-title">Hidden Beaches of Crete No One Tells You About</a>
-      <p class="article-excerpt">Beyond the postcards — secret coves, pink sand shores and sea caves that Crete hides from the crowds.</p>
-      <div class="article-meta"><span>Feb 28, 2024 · 8 min</span><a href="#" class="article-link">Read →</a></div>
+      <div>
+        <span class="article-cat">Europe · Greece</span>
+        <a href="#" class="article-title">Hidden Beaches of Crete No One Tells You About</a>
+        <p class="article-excerpt">Beyond the postcards — secret coves, pink sand shores and sea caves that Crete hides from the crowds.</p>
+      </div>
+      <div class="article-meta">
+        <span class="article-type-badge badge-story">Travel Story</span>
+        <span class="article-time">Feb 28, 2024 · 8 min</span>
+        <a href="#" class="article-link">Read the story →</a>
+      </div>
     </div>
 
     <div class="article-card" data-cat="Africa" data-type="story">
+      <div class="article-num">02</div>
       <div class="article-img">
-        <span class="article-type type-story">Travel Story</span>
-        <img src="https://images.unsplash.com/photo-1489493585363-d69421e0edd3?w=700&q=75" alt="Morocco">
+        <div class="article-photo" style="background-image:url('https://images.unsplash.com/photo-1489493585363-d69421e0edd3?w=700&q=75')"></div>
       </div>
-      <span class="article-cat">Africa · Morocco</span>
-      <a href="#" class="article-title">Morocco by Train: Fez to Marrakech Across the Atlas</a>
-      <p class="article-excerpt">Slow travel through a kingdom of contrast — ceramic souks, Berber villages and a Saharan sunset that changed everything.</p>
-      <div class="article-meta"><span>Jan 15, 2024 · 10 min</span><a href="#" class="article-link">Read →</a></div>
+      <div>
+        <span class="article-cat">Africa · Morocco</span>
+        <a href="#" class="article-title">Morocco by Train: Fez to Marrakech Across the Atlas</a>
+        <p class="article-excerpt">Slow travel through a kingdom of contrast — ceramic souks, Berber villages and a Saharan sunset that changed everything.</p>
+      </div>
+      <div class="article-meta">
+        <span class="article-type-badge badge-story">Travel Story</span>
+        <span class="article-time">Jan 15, 2024 · 10 min</span>
+        <a href="#" class="article-link">Read the story →</a>
+      </div>
     </div>
 
     <div class="article-card" data-cat="Asia" data-type="guide">
+      <div class="article-num">03</div>
       <div class="article-img">
-        <span class="article-type type-guide">Travel Guide</span>
-        <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=700&q=75" alt="India">
+        <div class="article-photo" style="background-image:url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=700&q=75')"></div>
       </div>
-      <span class="article-cat">Asia · India</span>
-      <a href="#" class="article-title">7 Days in Rajasthan: The Complete Photographer's Route</a>
-      <p class="article-excerpt">From Jaipur's pink walls to Jodhpur's blue city — the best light, the best spots, the best times to visit.</p>
-      <div class="article-meta"><span>Dec 10, 2023 · 12 min</span><a href="#" class="article-link">Read →</a></div>
+      <div>
+        <span class="article-cat">Asia · India</span>
+        <a href="#" class="article-title">7 Days in Rajasthan: The Complete Photographer's Route</a>
+        <p class="article-excerpt">From Jaipur's pink walls to Jodhpur's blue city — the best light, the best spots, the best times to visit.</p>
+      </div>
+      <div class="article-meta">
+        <span class="article-type-badge badge-guide">Travel Guide</span>
+        <span class="article-time">Dec 10, 2023 · 12 min</span>
+        <a href="#" class="article-link">Read the guide →</a>
+      </div>
     </div>
 
     <div class="article-card" data-cat="Americas" data-type="guide">
+      <div class="article-num">04</div>
       <div class="article-img">
-        <span class="article-type type-guide">Travel Guide</span>
-        <img src="https://images.unsplash.com/photo-1526392060635-9d6019884377?w=700&q=75" alt="Patagonia">
+        <div class="article-photo" style="background-image:url('https://images.unsplash.com/photo-1526392060635-9d6019884377?w=700&q=75')"></div>
       </div>
-      <span class="article-cat">Americas · Chile</span>
-      <a href="#" class="article-title">How to Reach Patagonia on a Budget: Full 2024 Guide</a>
-      <p class="article-excerpt">Flights, buses, ferries, camping permits — everything you need to plan the trip of a lifetime without breaking the bank.</p>
-      <div class="article-meta"><span>Nov 5, 2023 · 15 min</span><a href="#" class="article-link">Read →</a></div>
+      <div>
+        <span class="article-cat">Americas · Chile</span>
+        <a href="#" class="article-title">How to Reach Patagonia on a Budget: Full 2024 Guide</a>
+        <p class="article-excerpt">Flights, buses, ferries, camping permits — everything you need to plan the trip of a lifetime without breaking the bank.</p>
+      </div>
+      <div class="article-meta">
+        <span class="article-type-badge badge-guide">Travel Guide</span>
+        <span class="article-time">Nov 5, 2023 · 15 min</span>
+        <a href="#" class="article-link">Read the guide →</a>
+      </div>
     </div>
 
     <div class="article-card" data-cat="Europe" data-type="guide">
+      <div class="article-num">05</div>
       <div class="article-img">
-        <span class="article-type type-guide">Travel Guide</span>
-        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=700&q=75" alt="Iceland">
+        <div class="article-photo" style="background-image:url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=700&q=75')"></div>
       </div>
-      <span class="article-cat">Europe · Iceland</span>
-      <a href="#" class="article-title">Iceland in 10 Days: Ring Road Without a Car</a>
-      <p class="article-excerpt">Buses, hitchhiking and organised tours — yes, you can see the whole island without renting a vehicle.</p>
-      <div class="article-meta"><span>Oct 20, 2023 · 11 min</span><a href="#" class="article-link">Read →</a></div>
+      <div>
+        <span class="article-cat">Europe · Iceland</span>
+        <a href="#" class="article-title">Iceland in 10 Days: Ring Road Without a Car</a>
+        <p class="article-excerpt">Buses, hitchhiking and organised tours — yes, you can see the whole island without renting a vehicle.</p>
+      </div>
+      <div class="article-meta">
+        <span class="article-type-badge badge-guide">Travel Guide</span>
+        <span class="article-time">Oct 20, 2023 · 11 min</span>
+        <a href="#" class="article-link">Read the guide →</a>
+      </div>
     </div>
 
     <div class="article-card" data-cat="Asia" data-type="story">
+      <div class="article-num">06</div>
       <div class="article-img">
-        <span class="article-type type-story">Travel Story</span>
-        <img src="https://images.unsplash.com/photo-1557750255-c76072a7aad1?w=700&q=75" alt="Vietnam">
+        <div class="article-photo" style="background-image:url('https://images.unsplash.com/photo-1557750255-c76072a7aad1?w=700&q=75')"></div>
       </div>
-      <span class="article-cat">Asia · Vietnam</span>
-      <a href="#" class="article-title">Hội An After Dark: A Night Among the Lanterns</a>
-      <p class="article-excerpt">When the last tour group leaves and the lanterns take over — the ancient town reveals its quieter, more magical self.</p>
-      <div class="article-meta"><span>Sep 8, 2023 · 7 min</span><a href="#" class="article-link">Read →</a></div>
+      <div>
+        <span class="article-cat">Asia · Vietnam</span>
+        <a href="#" class="article-title">Hội An After Dark: A Night Among the Lanterns</a>
+        <p class="article-excerpt">When the last tour group leaves and the lanterns take over — the ancient town reveals its quieter, more magical self.</p>
+      </div>
+      <div class="article-meta">
+        <span class="article-type-badge badge-story">Travel Story</span>
+        <span class="article-time">Sep 8, 2023 · 7 min</span>
+        <a href="#" class="article-link">Read the story →</a>
+      </div>
     </div>
 
   </div>
@@ -685,12 +472,18 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const f = btn.dataset.filter;
+    let n = 1;
     cards.forEach(card => {
       const show = f === 'all'
         || card.dataset.cat === f
         || (f === 'story' && card.dataset.type === 'story')
         || (f === 'guide' && card.dataset.type === 'guide');
       card.classList.toggle('hidden', !show);
+      if (show) {
+        const numEl = card.querySelector('.article-num');
+        if (numEl) numEl.textContent = String(n).padStart(2,'0');
+        n++;
+      }
     });
   });
 });

@@ -394,16 +394,23 @@ function shuffleArray(arr) {
   return a;
 }
 
+function isInViewport(el) {
+  const r = el.getBoundingClientRect();
+  return r.top < window.innerHeight && r.bottom > 0;
+}
+
 function startRefresh() {
   if (refreshTimer) clearInterval(refreshTimer);
   refreshTimer = setInterval(() => {
     if (activeFilter !== 'all') return;
+    const offscreen = allItems.filter(el => !isInViewport(el));
+    if (offscreen.length === 0) return;
     const shuffled = shuffleArray(photos);
-    allItems.forEach(el => { el.style.opacity = '0'; });
+    offscreen.forEach(el => { el.style.opacity = '0'; });
     setTimeout(() => {
-      allItems.forEach((el, i) => {
+      offscreen.forEach((el, i) => {
         const p = shuffled[i % shuffled.length];
-        el.querySelector('img').src               = p.src;
+        el.querySelector('img').src                   = p.src;
         el.querySelector('.masonry-loc').textContent  = p.loc;
         el.querySelector('.masonry-name').textContent = p.name;
         el.querySelector('.masonry-tag').textContent  = p.cat;
@@ -413,7 +420,7 @@ function startRefresh() {
         setTimeout(() => { el.style.opacity = '1'; }, i * 40);
       });
     }, 500);
-  }, 8000);
+  }, 30000);
 }
 
 buildGallery('all');
