@@ -568,14 +568,16 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
 
 .film-track {
   display: flex;
-  gap: 0;
+  gap: 10px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 0;
+  padding: 4px 0 16px;
   scrollbar-width: none;
   -ms-overflow-style: none;
   cursor: grab;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
 }
 .film-track:active { cursor: grabbing; }
 .film-track::-webkit-scrollbar { display: none; }
@@ -617,8 +619,7 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: contain;
-  background: #3B3030;
+  object-fit: cover;
   pointer-events: none;
   user-select: none;
   filter: brightness(.92) saturate(.95);
@@ -742,9 +743,9 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
     </div>
     <div class="photo-grid">
       <div class="pc">
-        <span class="pc-tag">Asia</span>
-        <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_900/philippines-onuk-drone.jpg" alt="Onuk Island">
-        <div class="pc-overlay"><p class="pc-loc">Onuk Island · Philippines</p><p class="pc-name">Onuk from Above</p></div>
+        <span class="pc-tag">Europe</span>
+        <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_900/philippines-onuk-drone.jpg" alt="Nea Iraklitsa">
+        <div class="pc-overlay"><p class="pc-loc">Nea Iraklitsa · Greece</p><p class="pc-name">Aegean Marina</p></div>
       </div>
       <div class="pc">
         <span class="pc-tag">Europe</span>
@@ -909,7 +910,7 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
           <img src="https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_640/philippines-onuk-drone.jpg" alt="Onuk from Above" loading="lazy">
           <div class="film-hover">
             <p class="film-place">Philippines</p>
-            <p class="film-name">Onuk from Above</p>
+            <p class="film-name">Aegean Marina</p>
           </div>
         </div>
         <div class="film-frame">
@@ -1187,7 +1188,7 @@ function animateCounter(el, target, duration) {
 
 (async function() {
   // 1. Fetch real values from map.html
-  var totals = { places: 81, countries: 27, articles: 0 };
+  var totals = { places: 86, countries: 28, articles: 1 };
   try {
     var res  = await fetch('map.html');
     var text = await res.text();
@@ -1302,7 +1303,7 @@ function animateCounter(el, target, duration) {
 /* ── Featured destinations — динамична смяна ── */
 (function() {
   const pool = [
-    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/philippines-onuk-drone.jpg',   loc:'Onuk Island · Philippines', name:'Onuk from Above',    cat:'Asia'   },
+    { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/philippines-onuk-drone.jpg',   loc:'Nea Iraklitsa · Greece',    name:'Aegean Marina',       cat:'Europe' },
     { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/philippines-coron-01.jpg',     loc:'Coron · Philippines',       name:'Coron',              cat:'Asia'   },
     { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/philippines-coron-03.jpg',     loc:'Coron · Philippines',       name:'Philippine Waters',  cat:'Asia'   },
     { src:'https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto/w_900/philippines-balabac-drone.jpg',loc:'Balabac · Philippines',     name:'Above Balabac',      cat:'Asia'   },
@@ -1330,20 +1331,29 @@ function animateCounter(el, target, duration) {
     return arr;
   }
 
-  let queue = shuffle(pool);
+  // Tracking кои снимки са в момента показани
+  let shownSrcs = new Set(pcs.map(pc => pc.querySelector('img') ? pc.querySelector('img').src : ''));
+  let available = shuffle(pool.filter(p => !shownSrcs.has(p.src)));
   let qi = 0;
 
   function nextPhoto() {
-    // Избираме pc извън viewport-а или random
-    const offscreen = pcs.filter(pc => {
-      const r = pc.getBoundingClientRect();
-      return r.bottom < 0 || r.top > window.innerHeight;
-    });
-    const target = offscreen.length ? offscreen[Math.floor(Math.random()*offscreen.length)] : pcs[Math.floor(Math.random()*pcs.length)];
+    if (qi >= available.length) {
+      // Нова разбъркана опашка — изключваме текущо показаните
+      shownSrcs = new Set(pcs.map(pc => pc.querySelector('img') ? pc.querySelector('img').src : ''));
+      available = shuffle(pool.filter(p => !shownSrcs.has(p.src)));
+      qi = 0;
+      if (!available.length) { available = shuffle(pool); }
+    }
 
-    const p = queue[qi % queue.length];
-    qi++;
-    if (qi >= queue.length) { queue = shuffle(pool); qi = 0; }
+    const p = available[qi++];
+
+    // Избираме pc която НЕ показва вече тази снимка
+    const targets = pcs.filter(pc => {
+      const img = pc.querySelector('img');
+      return img && img.src !== p.src;
+    });
+    if (!targets.length) return;
+    const target = targets[Math.floor(Math.random() * targets.length)];
 
     target.style.opacity = '0';
     target.style.transition = 'opacity .5s ease';
@@ -1357,6 +1367,7 @@ function animateCounter(el, target, duration) {
       if (name) name.textContent = p.name;
       if (tag)  tag.textContent = p.cat;
       target.style.opacity = '1';
+      shownSrcs = new Set(pcs.map(pc => pc.querySelector('img') ? pc.querySelector('img').src : ''));
     }, 500);
   }
 

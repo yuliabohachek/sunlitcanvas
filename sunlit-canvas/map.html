@@ -181,12 +181,54 @@ nav {
 }
 
 .popup-wrap { width:280px; font-family:var(--ubuntu); }
+
+/* Slideshow */
+.popup-slideshow {
+  position: relative;
+  width: 100%; height: 170px;
+  overflow: hidden;
+  background: #e8e0d4;
+}
+.popup-slide {
+  position: absolute; inset: 0;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.popup-slide.active { opacity: 1; }
+.popup-slide img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.popup-slide-dots {
+  position: absolute; bottom: 8px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 5px; z-index: 2;
+}
+.popup-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,.45);
+  transition: background .3s;
+  cursor: pointer;
+}
+.popup-dot.active { background: #fff; }
+.popup-slide-prev, .popup-slide-next {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(0,0,0,.3); color: #fff; border: none;
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; cursor: pointer; z-index: 2;
+  transition: background .2s;
+}
+.popup-slide-prev:hover, .popup-slide-next:hover { background: rgba(0,0,0,.6); }
+.popup-slide-prev { left: 8px; }
+.popup-slide-next { right: 8px; }
+
 .popup-img {
-  width:100%; height:160px; object-fit:cover; display:block;
+  width:100%; height:170px; object-fit:cover; display:block;
   background:#e8e0d4;
 }
 .popup-img-placeholder {
-  width:100%; height:160px;
+  width:100%; height:170px;
   background:linear-gradient(135deg,#e8e0d4,#EEE3CB);
   display:flex; align-items:center; justify-content:center;
   color:var(--mist); font-size:2rem;
@@ -373,7 +415,7 @@ const places = [
   { name:"Bolzano", country:"Italy", region:"Europe", lat:46.4983, lng:11.3548, img:"", desc:"A bilingual Alpine city where Italian and Austrian cultures meet under the Dolomites.", article:"" },
 
   /* ── ГЪРЦИЯ ── */
-  { name:"Nea Iraklitsa", country:"Greece", region:"Europe", lat:40.8900, lng:24.2800, img:"", desc:"A quiet seaside village on the northern Aegean coast.", article:"" },
+  { name:"Nea Iraklitsa", country:"Greece", region:"Europe", lat:40.8900, lng:24.2800, img:"https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/philippines-onuk-drone.jpg", desc:"A quiet seaside village on the northern Aegean coast.", article:"", imgs:["https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/philippines-onuk-drone.jpg","https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/greece-nea-iraklitsa-01.jpg","https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/greece-nea-iraklitsa-02.jpg"]},
   { name:"Halkidiki", country:"Greece", region:"Europe", lat:40.3167, lng:23.3667, img:"", desc:"Three peninsulas of pine forests and crystal water south of Thessaloniki.", article:"" },
   { name:"Corfu", country:"Greece", region:"Europe", lat:39.6243, lng:19.9217, img:"", desc:"The greenest of the Greek islands — Venetian architecture and olive groves.", article:"" },
   { name:"Paxos", country:"Greece", region:"Europe", lat:39.2000, lng:20.1667, img:"", desc:"A tiny island of ancient olive trees and impossibly blue sea caves.", article:"" },
@@ -402,7 +444,7 @@ const places = [
   { name:"Lisbon", country:"Portugal", region:"Europe", lat:38.7223, lng:-9.1393, img:"", desc:"Tram lines climbing sun-bleached hills, Fado drifting from open windows.", article:"" },
 
   /* ── МАЛТА ── */
-  { name:"Malta", country:"Malta", region:"Europe", lat:35.9375, lng:14.3754, img:"", desc:"A limestone island of ancient temples, Grand Harbour and the Knights of St John.", article:"" },
+  { name:"Malta", country:"Malta", region:"Europe", lat:35.9375, lng:14.3754, img:"https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/malta-valletta-01.jpg", desc:"A limestone island of ancient temples, Grand Harbour and the Knights of St John.", article:"", imgs:["https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/malta-valletta-01.jpg","https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/malta-valletta-02.jpg","https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/malta-valletta-03.jpg"]},
 
   /* ── ГРУЗИЯ ── */
   { name:"Tbilisi", country:"Georgia", region:"Europe", lat:41.6938, lng:44.8015, img:"", desc:"Sulphur baths, wine in clay jugs and a old town of carved wooden balconies.", article:"" },
@@ -442,12 +484,12 @@ const places = [
   { name:"Transylvania", country:"Romania", region:"Europe", lat:46.0, lng:25.0, img:"", desc:"Medieval Saxon towns, Dracula's castle and the most dramatic mountain roads in Europe.", article:"" },
 
   /* ── КИТАЙ ── */
-  { name:"Beijing", country:"People's Republic of China", region:"Asia", lat:39.9042, lng:116.4074, img:"", desc:"The Forbidden City, the Great Wall, and a city of 22 million in constant motion.", article:"" },
+  { name:"Beijing", country:"People's Republic of China", region:"Asia", lat:39.9042, lng:116.4074, img:"https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/china-beijing-lionheads.jpg", desc:"The Forbidden City, the Great Wall, and a city of 22 million in constant motion.", article:"", imgs:["https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/china-beijing-lionheads.jpg"]},
   { name:"Chaozhou", country:"People's Republic of China", region:"Asia", lat:23.6618, lng:116.6220, img:"", desc:"An ancient city of Chaoshan culture, teahouses and intricate embroidery.", article:"" },
   { name:"Guangzhou", country:"People's Republic of China", region:"Asia", lat:23.1291, lng:113.2644, img:"", desc:"The Pearl River Delta's great trading city — dim sum capital of the world.", article:"" },
   { name:"Foshan", country:"People's Republic of China", region:"Asia", lat:23.0218, lng:113.1216, img:"", desc:"The birthplace of Bruce Lee and a centre of Cantonese martial arts and ceramics.", article:"" },
   { name:"Hong Kong", country:"Hong Kong SAR", region:"Asia", lat:22.3193, lng:114.1694, img:"", desc:"Seven million people on a mountainous island — the most cinematic skyline on earth.", article:"" },
-  { name:"Shenzhen", country:"People's Republic of China", region:"Asia", lat:22.5431, lng:114.0579, img:"", desc:"A fishing village that became a megacity in forty years.", article:"" },
+  { name:"Shenzhen", country:"People's Republic of China", region:"Asia", lat:22.5431, lng:114.0579, img:"https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/shenzhen-02.jpg", desc:"A fishing village that became a megacity in forty years.", article:"", imgs:["https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/shenzhen-01.jpg","https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/shenzhen-02.jpg","https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/shenzhen-03.jpg","https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/shenzhen-04.jpg","https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/shenzhen-05.jpg"]},
 
   /* ── ТАЙЛАНД ── */
   { name:"Bangkok", country:"Thailand", region:"Asia", lat:13.7563, lng:100.5018, img:"", desc:"Temples, tuk-tuks and the finest street food on the planet.", article:"" },
@@ -467,7 +509,7 @@ const places = [
   /* ── ФИЛИПИНИ ── */
   { name:"Manila", country:"Philippines", region:"Asia", lat:14.5995, lng:120.9842, img:"", desc:"The chaotic, vibrant capital of the Philippines on Manila Bay.", article:"" },
   { name:"Puerto Princesa", country:"Philippines", region:"Asia", lat:9.7392, lng:118.7353, img:"", desc:"Gateway to Palawan — the Underground River and some of the world's best diving.", article:"" },
-  { name:"Coron", country:"Philippines", region:"Asia", lat:12.0022, lng:120.2040, img:"", desc:"Crystal lagoons, WWII wrecks and the clearest water in the Philippines.", article:"" },
+  { name:"Coron", country:"Philippines", region:"Asia", lat:12.0022, lng:120.2040, img:"https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/philippines-coron-01.jpg", desc:"Crystal lagoons, WWII wrecks and the clearest water in the Philippines.", article:"", imgs:["https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/philippines-coron-01.jpg","https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/philippines-coron-02.jpg","https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/philippines-coron-03.jpg","https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/philippines-coron-04.jpg"]},
 
   /* ── САЩ ── */
   { name:"Washington DC", country:"USA", region:"Americas", lat:38.9072, lng:-77.0369, img:"", desc:"Monuments, museums and the Mall — the capital of the world's most powerful nation.", article:"" },
@@ -583,6 +625,12 @@ const routes = [
   { from:[42.6977,23.3219],   to:[42.0700,23.1500],   type:"road" },   // Sofia→StobPyramids
   { from:[43.8485,25.9543],   to:[44.4268,26.1025],   type:"road" },   // Ruse→Bucharest
 
+
+  { name:"Onuk Island", country:"Philippines", region:"Asia", lat:8.2167, lng:117.2833, img:"https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/philippines-balabac-drone.jpg", desc:"A remote paradise island in Balabac — powder sand, turquoise shallows and almost no one else.", article:"", imgs:["https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/philippines-balabac-drone.jpg"]},
+  { name:"Candaraman Island", country:"Philippines", region:"Asia", lat:8.1833, lng:117.2500, img:"", desc:"One of Balabac's hidden gems — surrounded by vibrant coral reefs.", article:"" },
+  { name:"Canabungan Island", country:"Philippines", region:"Asia", lat:8.2500, lng:117.3167, img:"", desc:"A tiny uninhabited island in the Balabac archipelago with crystal-clear waters.", article:"" },
+  { name:"Patongong Island", country:"Philippines", region:"Asia", lat:8.1500, lng:117.2167, img:"", desc:"Remote island in the Balabac chain — accessible only by boat from Puerto Princesa.", article:"" },
+  { name:"Mostar", country:"Bosnia and Herzegovina", region:"Europe", lat:43.3438, lng:17.8078, img:"", desc:"The old bridge Stari Most rebuilt after the war — a symbol of reconciliation spanning the Neretva river.", article:"" },
 ];
 
 /* ── Инициализация на картата ── */
@@ -622,9 +670,33 @@ function makeIcon(featured) {
 
 /* ── Popup HTML builder ── */
 function makePopup(p) {
-  const imgHtml = p.img
-    ? `<img class="popup-img" src="${p.img}" alt="${p.name}">`
-    : `<div class="popup-img-placeholder"><i class="fas fa-camera"></i></div>`;
+  // Събираме всички снимки — imgs[] масив или единична img
+  const slides = (p.imgs && p.imgs.length)
+    ? p.imgs
+    : (p.img ? [p.img] : []);
+
+  let imgHtml;
+  if (slides.length === 0) {
+    imgHtml = `<div class="popup-img-placeholder"><i class="fas fa-camera"></i></div>`;
+  } else if (slides.length === 1) {
+    imgHtml = `<img class="popup-img" src="${slides[0]}" alt="${p.name}">`;
+  } else {
+    const slideDivs = slides.map((src, i) =>
+      `<div class="popup-slide${i===0?' active':''}">
+        <img src="${src}" alt="${p.name}">
+      </div>`
+    ).join('');
+    const dots = slides.map((_, i) =>
+      `<span class="popup-dot${i===0?' active':''}" data-i="${i}"></span>`
+    ).join('');
+    imgHtml = `
+      <div class="popup-slideshow" data-total="${slides.length}" data-current="0">
+        ${slideDivs}
+        <button class="popup-slide-prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="popup-slide-next"><i class="fas fa-chevron-right"></i></button>
+        <div class="popup-slide-dots">${dots}</div>
+      </div>`;
+  }
 
   const linkHtml = p.article
     ? `<a href="${p.article}" class="popup-link" target="_blank">Read the story <i class="fas fa-arrow-right"></i></a>`
@@ -641,6 +713,30 @@ function makePopup(p) {
       </div>
     </div>`;
 }
+
+/* ── Slideshow interaction (event delegation) ── */
+document.addEventListener('click', function(e) {
+  const sw = e.target.closest('.popup-slideshow');
+  if (!sw) return;
+
+  const total   = parseInt(sw.dataset.total);
+  let current   = parseInt(sw.dataset.current);
+  const slides  = sw.querySelectorAll('.popup-slide');
+  const dots    = sw.querySelectorAll('.popup-dot');
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = (n + total) % total;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+    sw.dataset.current = current;
+  }
+
+  if (e.target.closest('.popup-slide-prev')) goTo(current - 1);
+  else if (e.target.closest('.popup-slide-next')) goTo(current + 1);
+  else if (e.target.closest('.popup-dot')) goTo(parseInt(e.target.dataset.i));
+});
 
 
 /* ── Легенда ── */
