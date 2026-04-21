@@ -302,17 +302,17 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
 <body>
 
 <!-- NAV -->
-<nav>
+<nav id="nav">
   <div class="nav-inner">
     <a href="index.html" class="nav-logo">
       <img src="https://res.cloudinary.com/dbyioi2qq/q_auto/v1716326701/static/sunlitcanvaslogosvg_1716326700_53038.svg" alt="Sunlit Canvas">
     </a>
     <ul class="nav-links">
-<li><a href="gallery.html">Photo Gallery</a></li>
-      <li><a href="blog.html">Stories & Guides</a></li>
+      <li><a href="gallery.html">Photo Gallery</a></li>
+      <li><a href="blog.html">Stories &amp; Guides</a></li>
       <li><a href="#">Shop Prints</a></li>
     </ul>
-    <a href="map.html" class="nav-btn active"><i class="fas fa-map"></i> Interactive map</a>
+    <a href="map.html" class="nav-btn"><i class="fas fa-map"></i> Interactive map</a>
     <div class="nav-mobile-right">
       <a href="map.html" class="nav-mobile-btn" id="mobileMapBtn"><i class="fas fa-map"></i> Map</a>
       <button type="button" class="hamburger" id="ham" onclick="document.getElementById('mobileNav').classList.add('open')"><span></span><span></span><span></span></button>
@@ -320,11 +320,11 @@ nav { z-index:1600 !important; pointer-events:auto !important; }
   </div>
 </nav>
 <div class="mobile-nav" id="mobileNav">
-  <button type="button" class="mobile-close" id="mobileClose" onclick="document.getElementById('mobileNav').classList.remove('open')">✕</button>
+  <button type="button" class="mobile-close" id="mobileClose" onclick="document.getElementById('mobileNav').classList.remove('open')">&#x2715;</button>
   <a href="gallery.html" onclick="closeMobile()">Photo Gallery</a>
   <a href="blog.html" onclick="closeMobile()">Stories &amp; Guides</a>
   <a href="#" onclick="closeMobile()">Shop Prints</a>
-  <a href="map.html" class="nav-btn" onclick="closeMobile()"><i class="fas fa-map"></i> Interactive map</a>
+  <a href="map.html" class="pill-btn" onclick="closeMobile()"><i class="fas fa-map"></i> Interactive map</a>
 </div>
 
 <div class="page-wrap">
