@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sunlit Canvas — WordPress Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Palanquin:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.7.2/css/all.css"/>
+<style>
+/* ── DEMO BANNER ── */
+.demo-banner {
+  position:fixed; top:0; left:0; right:0; z-index:9999;
+  background:#664343; color:#fff;
+  font-family:'Ubuntu',sans-serif; font-size:13px;
+  padding:8px 20px; display:flex; align-items:center; justify-content:center; gap:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+.demo-banner strong { font-weight:700; }
+.demo-banner span { opacity:.8; }
+
+/* ── BASE ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --dark:#3B3030; --accent:#664343; --accent-lt:#E4E0E1;
+  --white:#ffffff; --cream:#EEE3CB; --mist:#6b6b6b;
+  --ubuntu:'Ubuntu',sans-serif; --body:'Palanquin',sans-serif;
+}
+html { font-size:16px; scroll-behavior:smooth; }
+body { font-family:var(--ubuntu); color:var(--dark); overflow-x:hidden; padding-top:36px; }
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:36px; left:0; right:0; z-index:1600;
+  padding:20px 16px;
+  background:linear-gradient(to bottom,rgba(255,255,255,0.97),transparent);
+  transition:background .3s, padding .3s;
+}
+nav.scrolled {
+  background:rgba(255,255,255,0.97);
+  backdrop-filter:blur(10px);
+  padding:12px 16px;
+  box-shadow:0 1px 0 rgba(34,39,37,.08);
+}
+.nav-inner { max-width:1300px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; }
+.nav-logo img { width:70px; height:70px; display:block; }
+.nav-links { display:flex; gap:0; list-style:none; }
+.nav-links a {
+  font-family:var(--ubuntu); font-size:16px; font-weight:400;
+  color:var(--dark); text-decoration:none; padding:5px 12px;
+  border-radius:25px; display:block; transition:background .2s;
+}
+.nav-links a:hover { background:var(--accent-lt); color:var(--accent); }
+.nav-btn {
+  display:flex; align-items:center; gap:10px;
+  background:var(--accent); color:#fff;
+  padding:10px 24px; border-radius:25px;
+  font-family:var(--ubuntu); font-size:16px; font-weight:700;
+  text-decoration:none; transition:box-shadow .2s;
+}
+.nav-btn:hover { box-shadow:5px 5px 0 0 var(--dark); }
+.nav-mobile-right { display:none; align-items:center; gap:10px; }
+.nav-mobile-btn {
+  display:flex; align-items:center; gap:8px;
+  background:var(--accent); color:#fff !important;
+  padding:8px 14px; border-radius:25px;
+  font-family:var(--ubuntu); font-size:13px; font-weight:700; text-decoration:none;
+}
+.hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none; }
+.hamburger span { width:24px; height:2px; background:var(--dark); display:block; border-radius:2px; }
+.mobile-nav {
+  display:none; position:fixed; inset:0; z-index:3000;
+  background:#ffffff; flex-direction:column;
+  align-items:center; justify-content:center; gap:1.5rem;
+}
+.mobile-nav.open { display:flex; }
+.mobile-nav a { font-family:var(--ubuntu); font-size:1.8rem; color:var(--dark); text-decoration:none; }
+.mobile-close { position:absolute; top:1.5rem; right:1.5rem; font-size:2rem; background:none; border:none; cursor:pointer; color:var(--dark); font-weight:700; }
+
+/* ── HERO ── */
+.hero-wrap {
+  min-height:100vh; width:100%;
+  background:linear-gradient(45deg,#ffffff 46%,#EEE3CB 100%);
+  display:flex; flex-direction:column; align-items:center;
+}
+.hero-content {
+  display:flex; flex-direction:row; flex-wrap:wrap;
+  justify-content:space-around; align-items:stretch;
+  gap:20px; width:100%; max-width:1300px;
+  height:85vh; padding:20px 0; margin-top:90px;
+}
+.hero-text {
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:flex-start;
+  width:40%; min-width:40%; max-width:40%;
+  animation:heroFadeIn 1s ease forwards;
+  padding-left:40px;
+}
+@keyframes heroFadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+.hero-heading {
+  font-family:var(--ubuntu); font-size:clamp(2rem,3.5vw,3.2rem);
+  font-weight:700; color:var(--dark); line-height:1.15;
+  margin-bottom:20px; letter-spacing:-.5px;
+}
+.hero-body-text {
+  font-family:var(--body); font-size:1.15rem; color:var(--mist);
+  line-height:1.75; margin-bottom:32px; max-width:420px;
+}
+.hero-btn {
+  display:inline-flex; align-items:center; gap:10px;
+  background:var(--dark); color:#fff;
+  padding:12px 28px; border-radius:25px;
+  font-family:var(--ubuntu); font-size:15px; font-weight:700;
+  text-decoration:none; transition:box-shadow .2s;
+}
+.hero-btn:hover { box-shadow:5px 5px 0 var(--accent); }
+
+/* Hero ellipse */
+.hero-image {
+  display:block; position:relative;
+  width:320px; height:480px;
+  align-self:center; flex-shrink:0;
+}
+.hero-ellipse-inner {
+  width:100%; height:100%; border-radius:360px;
+  overflow:hidden; position:relative;
+  border:3px solid var(--dark);
+  box-shadow:8px 8px 0 0 var(--dark);
+  transition:box-shadow .3s, border-color .3s;
+}
+.hero-ellipse-inner:hover {
+  box-shadow:8px 8px 0 0 var(--accent);
+  border-color:var(--accent);
+}
+.hero-photo {
+  width:100%; height:100%;
+  background-image:url('https://res.cloudinary.com/dbyioi2qq/q_auto/v1708469381/static/hero-imagejpg_1708469379_39222.jpg');
+  background-size:cover; background-position:50% 30%;
+  animation:kenBurns 14s ease-in-out infinite alternate;
+}
+@keyframes kenBurns {
+  0%   { transform:scale(1);    background-position:50% 30%; }
+  100% { transform:scale(1.08); background-position:50% 40%; }
+}
+
+/* ── SECTIONS ── */
+.sc-section { padding:80px 16px; }
+.sc-inner { max-width:1300px; margin:0 auto; }
+.sc-label {
+  font-family:var(--ubuntu); font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--accent);
+  display:flex; align-items:center; gap:10px; margin-bottom:8px;
+}
+.sc-label::before { content:''; width:28px; height:1px; background:var(--accent); display:block; }
+.sc-title {
+  font-family:var(--ubuntu); font-size:clamp(1.8rem,3vw,2.8rem);
+  font-weight:700; color:var(--dark); line-height:1.15; margin-bottom:0;
+}
+.sc-title em { font-style:italic; font-weight:300; color:var(--accent); }
+.sc-body { font-family:var(--body); font-size:1.1rem; color:var(--mist); line-height:1.8; }
+.sec-header { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px; }
+.view-all { font-family:var(--ubuntu); font-size:14px; color:var(--accent); text-decoration:none; }
+.view-all:hover { text-decoration:underline; }
+
+/* ── GALLERY ── */
+.gallery-section { background:#fff; }
+.photo-grid {
+  display:grid;
+  grid-template-columns:1.6fr 1fr 1fr;
+  grid-template-rows:240px 240px;
+  gap:12px;
+}
+.pc {
+  position:relative; overflow:hidden; cursor:pointer; border-radius:4px;
+}
+.pc:first-child { grid-row:1/3; }
+.pc img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .6s; }
+.pc:hover img { transform:scale(1.04); }
+.pc-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top,rgba(59,48,48,.7) 0%,transparent 60%);
+  opacity:0; transition:opacity .3s;
+  display:flex; flex-direction:column; justify-content:flex-end; padding:16px;
+}
+.pc:hover .pc-overlay { opacity:1; }
+.pc-loc { font-family:var(--ubuntu); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.7); }
+.pc-name { font-family:var(--ubuntu); font-size:16px; font-weight:700; color:#fff; }
+.pc-tag {
+  position:absolute; top:12px; left:12px;
+  background:var(--accent); color:#fff;
+  font-family:var(--ubuntu); font-size:10px; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase;
+  padding:4px 10px; border-radius:25px;
+}
+
+/* ── ABOUT ── */
+.about-section { background:linear-gradient(135deg,#ffffff 40%,#EEE3CB 100%); }
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; }
+.about-img-wrap { border-radius:4px; overflow:hidden; }
+.about-img-wrap img { width:100%; height:500px; object-fit:cover; display:block; }
+.about-text { display:flex; flex-direction:column; gap:20px; }
+.about-quote {
+  border-left:3px solid var(--accent); padding:12px 20px;
+  font-family:var(--body); font-style:italic; font-size:1.15rem; color:var(--dark);
+}
+.stats-row { display:flex; gap:2.5rem; flex-wrap:wrap; }
+.stat strong { display:block; font-family:var(--ubuntu); font-size:3rem; font-weight:700; color:var(--dark); line-height:1; }
+.stat strong.counting { color:var(--accent); }
+.stat span { font-family:var(--ubuntu); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--mist); }
+.pill-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--accent); color:#fff;
+  padding:12px 28px; border-radius:25px;
+  font-family:var(--ubuntu); font-size:14px; font-weight:700;
+  text-decoration:none; transition:box-shadow .2s;
+}
+.pill-btn:hover { box-shadow:5px 5px 0 0 var(--dark); }
+
+/* ── DESTINATIONS ── */
+.dest-section { background:#fff; }
+.dest-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+.dest-oval {
+  border-radius:360px; overflow:hidden; position:relative;
+  aspect-ratio:2/3; border:3px solid var(--dark);
+  box-shadow:5px 5px 0 0 var(--dark); cursor:pointer;
+  transition:box-shadow .3s, border-color .3s;
+}
+.dest-oval:hover { box-shadow:5px 5px 0 0 var(--accent); border-color:var(--accent); }
+.dest-oval img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 8s ease; }
+.dest-oval:hover img { transform:scale(1.06); }
+.dest-info {
+  position:absolute; inset:0;
+  background:linear-gradient(to top,rgba(59,48,48,.75) 0%,transparent 55%);
+  display:flex; flex-direction:column; justify-content:flex-end; align-items:center;
+  padding:24px 12px; text-align:center;
+}
+.dest-continent { font-family:var(--ubuntu); font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:rgba(255,255,255,.65); }
+.dest-name { font-family:var(--ubuntu); font-size:1.3rem; font-weight:700; color:#fff; }
+.dest-count { font-family:var(--body); font-size:13px; color:rgba(255,255,255,.6); }
+
+/* ── BLOG ── */
+.blog-section { background:#f9f6f1; }
+.blog-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+.blog-card { background:#fff; border-radius:4px; overflow:hidden; cursor:pointer; transition:transform .3s; }
+.blog-card:hover { transform:translateY(-4px); }
+.blog-img { height:220px; overflow:hidden; }
+.blog-img img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .6s; }
+.blog-card:hover .blog-img img { transform:scale(1.04); }
+.blog-body { padding:20px; }
+.blog-cat { font-family:var(--ubuntu); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+.blog-title { display:block; font-family:var(--ubuntu); font-size:1.05rem; font-weight:700; color:var(--dark); text-decoration:none; margin:8px 0; line-height:1.4; }
+.blog-title:hover { color:var(--accent); }
+.blog-excerpt { font-family:var(--body); font-size:14px; color:var(--mist); line-height:1.7; margin-bottom:14px; }
+.blog-meta { display:flex; justify-content:space-between; align-items:center; font-family:var(--ubuntu); font-size:12px; color:var(--mist); }
+.read-link { color:var(--accent); text-decoration:none; font-weight:700; }
+
+/* ── NEWSLETTER ── */
+.nl-section { background:var(--dark); text-align:center; }
+.nl-section .sc-label { justify-content:center; color:rgba(255,255,255,.5); }
+.nl-section .sc-label::before { background:rgba(255,255,255,.3); }
+.nl-section .sc-title { color:#fff; margin-bottom:16px; }
+.nl-sub { font-family:var(--body); font-size:1.1rem; color:rgba(255,255,255,.55); max-width:500px; margin:0 auto 32px; line-height:1.7; }
+.nl-form { display:flex; gap:0; max-width:480px; margin:0 auto; }
+.nl-form input {
+  flex:1; padding:14px 20px; border:none; border-radius:25px 0 0 25px;
+  font-family:var(--body); font-size:1rem; outline:none;
+}
+.nl-form button {
+  background:var(--accent); color:#fff; border:none;
+  padding:14px 28px; border-radius:0 25px 25px 0;
+  font-family:var(--ubuntu); font-size:14px; font-weight:700; cursor:pointer;
+}
+
+/* ── FOOTER ── */
+footer { background:#2a2020; padding:60px 16px 30px; }
+.footer-inner { max-width:1300px; margin:0 auto; }
+.footer-top { display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr; gap:40px; margin-bottom:40px; }
+.footer-brand-name { font-family:var(--ubuntu); font-size:1.4rem; font-weight:700; color:#fff; margin-bottom:12px; }
+.footer-brand p { font-family:var(--body); font-size:14px; color:rgba(255,255,255,.45); line-height:1.7; }
+.footer-socials { display:flex; gap:14px; margin-top:20px; }
+.footer-socials a { color:rgba(255,255,255,.4); font-size:1.1rem; transition:color .2s; }
+.footer-socials a:hover { color:#fff; }
+.footer-col h4 { font-family:var(--ubuntu); font-size:13px; font-weight:700; color:#fff; margin-bottom:16px; letter-spacing:.06em; text-transform:uppercase; }
+.footer-col ul { list-style:none; }
+.footer-col ul li { margin-bottom:10px; }
+.footer-col ul li a { font-family:var(--body); font-size:14px; color:rgba(255,255,255,.4); text-decoration:none; transition:color .2s; }
+.footer-col ul li a:hover { color:#fff; }
+.footer-bottom { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-family:var(--ubuntu); font-size:13px; color:rgba(255,255,255,.25); border-top:1px solid rgba(255,255,255,.08); padding-top:24px; }
+.footer-bottom a { color:inherit; text-decoration:none; }
+.footer-bottom-links { display:flex; gap:20px; }
+
+/* ── MOBILE ── */
+@media (max-width:768px) {
+  .nav-links, .nav-btn { display:none; }
+  .hamburger { display:flex; }
+  .nav-mobile-right { display:flex; }
+  .hero-content { flex-direction:column; height:auto; align-items:center; padding:20px; margin-top:70px; }
+  .hero-text { width:100%; min-width:unset; max-width:100%; padding:60px 0 0; align-items:center; text-align:center; }
+  .hero-image { width:200px; height:300px; margin:30px auto; }
+  .photo-grid { grid-template-columns:1fr 1fr; grid-template-rows:auto; }
+  .pc:first-child { grid-row:auto; }
+  .about-grid { grid-template-columns:1fr; gap:2rem; }
+  .dest-grid { grid-template-columns:1fr 1fr; }
+  .blog-grid { grid-template-columns:1fr; }
+  .footer-top { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- DEMO BANNER -->
+<div class="demo-banner">
+  <strong>🎨 WordPress Demo</strong>
+  <span>Така ще изглежда сайтът в WordPress + Kadence — 100% идентичен дизайн</span>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <img src="https://res.cloudinary.com/dbyioi2qq/q_auto/v1716326701/static/sunlitcanvaslogosvg_1716326700_53038.svg" alt="Sunlit Canvas">
+    </a>
+    <ul class="nav-links">
+      <li><a href="#">Photo Gallery</a></li>
+      <li><a href="#">Stories & Guides</a></li>
+      <li><a href="#">Shop Prints</a></li>
+    </ul>
+    <a href="#" class="nav-btn"><i class="fas fa-map"></i> Interactive map</a>
+    <div class="nav-mobile-right">
+      <a href="#" class="nav-mobile-btn"><i class="fas fa-map"></i> Map</a>
+      <button type="button" class="hamburger" id="ham" onclick="document.getElementById('mobileNav').classList.add('open')">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button type="button" class="mobile-close" onclick="document.getElementById('mobileNav').classList.remove('open')">✕</button>
+  <a href="#">Photo Gallery</a>
+  <a href="#">Stories & Guides</a>
+  <a href="#">Shop Prints</a>
+  <a href="#" class="nav-btn"><i class="fas fa-map"></i> Interactive map</a>
+</div>
+
+<!-- HERO -->
+<div class="hero-wrap">
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1 class="hero-heading">Embark on a journey through my lens,</h1>
+      <p class="hero-body-text">where a photograph has the power to convey more than just an image — it can hold emotions, stories, and whispered secrets. That's the essence of Sunlit Canvas.</p>
+      <a href="#about" class="hero-btn">About me</a>
+    </div>
+    <div class="hero-image">
+      <div class="hero-ellipse-inner">
+        <div class="hero-photo"></div>
+      </div>
+    </div>
+    <div style="width:20%;min-width:20px;"></div>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<section class="sc-section gallery-section">
+  <div class="sc-inner">
+    <div class="sec-header">
+      <div>
+        <p class="sc-label">Selected Works</p>
+        <h2 class="sc-title">Featured <em>destinations</em></h2>
+      </div>
+      <a href="#" class="view-all">View all photos →</a>
+    </div>
+    <div class="photo-grid">
+      <div class="pc">
+        <span class="pc-tag">Europe</span>
+        <img src="https://images.unsplash.com/photo-1555993539-1732b0258235?w=800&q=80" alt="Santorini">
+        <div class="pc-overlay"><p class="pc-loc">Cyclades · Greece</p><p class="pc-name">Santorini</p></div>
+      </div>
+      <div class="pc">
+        <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80" alt="Kyoto">
+        <div class="pc-overlay"><p class="pc-loc">Kansai · Japan</p><p class="pc-name">Kyoto</p></div>
+      </div>
+      <div class="pc">
+        <span class="pc-tag">Africa</span>
+        <img src="https://images.unsplash.com/photo-1489493585363-d69421e0edd3?w=800&q=80" alt="Morocco">
+        <div class="pc-overlay"><p class="pc-loc">Sahara · Morocco</p><p class="pc-name">Merzouga</p></div>
+      </div>
+      <div class="pc">
+        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80" alt="Iceland">
+        <div class="pc-overlay"><p class="pc-loc">North · Iceland</p><p class="pc-name">Highlands</p></div>
+      </div>
+      <div class="pc">
+        <span class="pc-tag">Americas</span>
+        <img src="https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800&q=80" alt="Patagonia">
+        <div class="pc-overlay"><p class="pc-loc">South America</p><p class="pc-name">Patagonia</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="sc-section about-section" id="about">
+  <div class="sc-inner">
+    <div class="about-grid">
+      <div class="about-img-wrap">
+        <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=800&q=80" alt="Photographer">
+      </div>
+      <div class="about-text">
+        <div>
+          <p class="sc-label">The Photographer</p>
+          <h2 class="sc-title">Light is my <em>language</em></h2>
+        </div>
+        <p class="about-quote">"I don't just take photographs — I collect moments the world almost let slip away."</p>
+        <p class="sc-body">Armed with a camera and an insatiable curiosity, I've spent years chasing golden hours across continents. Every frame is a dialogue between light, shadow, and the human stories in between.</p>
+        <div class="stats-row">
+          <div class="stat"><strong id="stat-countries">27</strong><span>Countries</span></div>
+          <div class="stat"><strong id="stat-places">81</strong><span>Places</span></div>
+          <div class="stat"><strong id="stat-articles">0</strong><span>Stories</span></div>
+        </div>
+        <div><a href="#" class="pill-btn">Read my story</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DESTINATIONS -->
+<section class="sc-section dest-section">
+  <div class="sc-inner">
+    <div class="sec-header">
+      <div>
+        <p class="sc-label">Browse by Region</p>
+        <h2 class="sc-title">Explore the <em>world</em></h2>
+      </div>
+      <a href="#" class="view-all">All destinations →</a>
+    </div>
+    <div class="dest-grid">
+      <div class="dest-card"><div class="dest-oval">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=75" alt="Europe">
+        <div class="dest-info"><p class="dest-continent">Region</p><p class="dest-name">Europe</p><p class="dest-count">24 destinations</p></div>
+      </div></div>
+      <div class="dest-card"><div class="dest-oval">
+        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=500&q=75" alt="Asia">
+        <div class="dest-info"><p class="dest-continent">Region</p><p class="dest-name">Asia</p><p class="dest-count">18 destinations</p></div>
+      </div></div>
+      <div class="dest-card"><div class="dest-oval">
+        <img src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=500&q=75" alt="Africa">
+        <div class="dest-info"><p class="dest-continent">Region</p><p class="dest-name">Africa</p><p class="dest-count">8 destinations</p></div>
+      </div></div>
+      <div class="dest-card"><div class="dest-oval">
+        <img src="https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=500&q=75" alt="Americas">
+        <div class="dest-info"><p class="dest-continent">Region</p><p class="dest-name">Americas</p><p class="dest-count">12 destinations</p></div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section class="sc-section blog-section">
+  <div class="sc-inner">
+    <div class="sec-header">
+      <div>
+        <p class="sc-label">Travel Stories</p>
+        <h2 class="sc-title">Latest from <em>the journal</em></h2>
+      </div>
+      <a href="#" class="view-all">All stories →</a>
+    </div>
+    <div class="blog-grid">
+      <article class="blog-card">
+        <div class="blog-img"><img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=75" alt="Tokyo"></div>
+        <div class="blog-body">
+          <span class="blog-cat">Asia · Japan</span>
+          <a href="#" class="blog-title">48 Hours in Tokyo: Temples, Ramen & Neon Lights</a>
+          <p class="blog-excerpt">A whirlwind dispatch from the city that never stops surprising.</p>
+          <div class="blog-meta"><span>March 12, 2024 · 6 min</span><a href="#" class="read-link">Read →</a></div>
+        </div>
+      </article>
+      <article class="blog-card">
+        <div class="blog-img"><img src="https://images.unsplash.com/photo-1531761535209-180857e963b9?w=600&q=75" alt="Crete"></div>
+        <div class="blog-body">
+          <span class="blog-cat">Europe · Greece</span>
+          <a href="#" class="blog-title">Hidden Beaches of Crete No One Tells You About</a>
+          <p class="blog-excerpt">Beyond the postcards — secret coves and sea caves.</p>
+          <div class="blog-meta"><span>Feb 28, 2024 · 8 min</span><a href="#" class="read-link">Read →</a></div>
+        </div>
+      </article>
+      <article class="blog-card">
+        <div class="blog-img"><img src="https://images.unsplash.com/photo-1489493585363-d69421e0edd3?w=600&q=75" alt="Morocco"></div>
+        <div class="blog-body">
+          <span class="blog-cat">Africa · Morocco</span>
+          <a href="#" class="blog-title">Morocco by Train: Fez to Marrakech</a>
+          <p class="blog-excerpt">Slow travel through a kingdom of contrast.</p>
+          <div class="blog-meta"><span>Jan 15, 2024 · 10 min</span><a href="#" class="read-link">Read →</a></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="sc-section nl-section">
+  <div class="sc-inner">
+    <p class="sc-label">Stay in the Loop</p>
+    <h2 class="sc-title">Never miss a <em>new journey</em></h2>
+    <p class="nl-sub">Monthly dispatches — new photo essays, travel guides and behind-the-lens stories.</p>
+    <form class="nl-form" onsubmit="event.preventDefault()">
+      <input type="email" placeholder="your@email.com">
+      <button type="submit">Subscribe</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <p class="footer-brand-name">Sunlit Canvas</p>
+        <p>Travel photography from the world's most extraordinary corners.</p>
+        <div class="footer-socials">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-pinterest"></i></a>
+          <a href="#"><i class="fab fa-500px"></i></a>
+          <a href="#"><i class="fas fa-envelope"></i></a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Navigate</h4><ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Photo Gallery</a></li>
+        <li><a href="#">Stories & Guides</a></li>
+        <li><a href="#">Resources</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Help</h4><ul>
+        <li><a href="#">Terms & Conditions</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Extra Links</h4><ul>
+        <li><a href="#">Shop Prints</a></li>
+        <li><a href="#">License Photos</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© Copyright 2024, All Rights Reserved — Sunlit Canvas</span>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').classList.toggle('scrolled', scrollY > 60);
+});
+
+// Counter animation
+function animateCounter(el, target, duration) {
+  var startTime = null;
+  el.classList.add('counting');
+  var step = function(ts) {
+    if (!startTime) startTime = ts;
+    var p = Math.min((ts - startTime) / duration, 1);
+    var ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.floor(ease * target);
+    if (p < 1) { requestAnimationFrame(step); }
+    else { el.textContent = target; el.classList.remove('counting'); }
+  };
+  requestAnimationFrame(step);
+}
+
+var fired = false;
+var obs = new IntersectionObserver(function(entries) {
+  if (fired || !entries[0].isIntersecting) return;
+  fired = true;
+  setTimeout(function(){ animateCounter(document.getElementById('stat-countries'), 27, 1400); }, 0);
+  setTimeout(function(){ animateCounter(document.getElementById('stat-places'), 81, 1400); }, 200);
+  setTimeout(function(){ animateCounter(document.getElementById('stat-articles'), 0, 1400); }, 400);
+}, { threshold: 0.3 });
+obs.observe(document.querySelector('.stats-row'));
+</script>
+</body>
+</html>

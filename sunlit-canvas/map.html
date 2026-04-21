@@ -525,6 +525,11 @@ const places = [
   { name:"Surat Thani", country:"Thailand", region:"Asia", lat:9.1382, lng:99.3214, img:"", desc:"The gateway to the Gulf of Thailand islands — ferries, night trains and the smell of the sea.", article:"" },
   { name:"Zambales", country:"Philippines", region:"Asia", lat:15.5082, lng:119.9697, img:"", desc:"Wild Pacific coastline, volcanic peaks and some of the most unspoiled beaches in Luzon.", article:"" },
   { name:"Ruse", country:"Bulgaria", region:"Europe", lat:43.8485, lng:25.9543, img:"", desc:"Bulgaria's Danube city — Belle Époque architecture and the gateway to Romania.", article:"" },
+  { name:"Mostar", country:"Bosnia and Herzegovina", region:"Europe", lat:43.3438, lng:17.8078, img:"", desc:"The old bridge Stari Most rebuilt after the war — a symbol of reconciliation spanning the Neretva river.", article:"" },
+  { name:"Roughton Island", country:"Philippines", region:"Asia", lat:8.25, lng:117.15, img:"https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/philippines-balabac-drone.jpg", desc:"A remote paradise island in Balabac — powder sand, turquoise shallows and almost no one else.", article:"" },
+  { name:"Candaraman Island", country:"Philippines", region:"Asia", lat:8.1833, lng:117.2500, img:"", desc:"One of Balabac's hidden gems — surrounded by vibrant coral reefs.", article:"" },
+  { name:"Canabungan Island", country:"Philippines", region:"Asia", lat:8.2500, lng:117.3167, img:"", desc:"A tiny uninhabited island in the Balabac archipelago with crystal-clear waters.", article:"" },
+  { name:"Patongong Island", country:"Philippines", region:"Asia", lat:8.1500, lng:117.2167, img:"", desc:"Remote island in the Balabac chain — accessible only by boat from Puerto Princesa.", article:"" },
 
 ];
 
@@ -626,11 +631,12 @@ const routes = [
   { from:[43.8485,25.9543],   to:[44.4268,26.1025],   type:"road" },   // Ruse→Bucharest
 
 
-  { name:"Onuk Island", country:"Philippines", region:"Asia", lat:8.2167, lng:117.2833, img:"https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/philippines-balabac-drone.jpg", desc:"A remote paradise island in Balabac — powder sand, turquoise shallows and almost no one else.", article:"", imgs:["https://res.cloudinary.com/dbuxihgb7/image/upload/q_auto,f_auto,w_800/philippines-balabac-drone.jpg"]},
-  { name:"Candaraman Island", country:"Philippines", region:"Asia", lat:8.1833, lng:117.2500, img:"", desc:"One of Balabac's hidden gems — surrounded by vibrant coral reefs.", article:"" },
-  { name:"Canabungan Island", country:"Philippines", region:"Asia", lat:8.2500, lng:117.3167, img:"", desc:"A tiny uninhabited island in the Balabac archipelago with crystal-clear waters.", article:"" },
-  { name:"Patongong Island", country:"Philippines", region:"Asia", lat:8.1500, lng:117.2167, img:"", desc:"Remote island in the Balabac chain — accessible only by boat from Puerto Princesa.", article:"" },
-  { name:"Mostar", country:"Bosnia and Herzegovina", region:"Europe", lat:43.3438, lng:17.8078, img:"", desc:"The old bridge Stari Most rebuilt after the war — a symbol of reconciliation spanning the Neretva river.", article:"" },
+  /* ── Балабак острови — с кола/лодка ── */
+  { from:[9.7392,118.7353],   to:[8.25,117.3167],   type:"road" },
+  { from:[8.25,117.3167], to:[8.25,117.15],   type:"road" },
+  { from:[8.25,117.3167], to:[8.15,117.2167],   type:"road" },
+  { from:[8.25,117.3167], to:[8.1833,117.25],   type:"road" },
+  { from:[8.15,117.2167], to:[8.1833,117.25],   type:"road" },
 ];
 
 /* ── Инициализация на картата ── */
@@ -639,7 +645,9 @@ const map = L.map('map', {
   zoom: 2.5,
   zoomControl: true,
   scrollWheelZoom: true,
-  minZoom: 2.5
+  minZoom: 2.5,
+  maxBounds: [[-75, -220], [85, 220]],
+  maxBoundsViscosity: 0.85
 });
 
 /* Светла минималистична карта без брандинг */
