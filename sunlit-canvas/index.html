@@ -215,13 +215,14 @@ nav.scrolled {
 .photo-grid {
   display:grid;
   grid-template-columns:1.55fr 1fr 1fr;
-  grid-template-rows:370px 280px;
+  grid-template-rows:auto;
   gap:14px;
 }
 .pc { position:relative; overflow:hidden; cursor:pointer; }
 .pc img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .6s ease; }
+.pc:not(:nth-child(1)) { aspect-ratio:4/3; }
 .pc:hover img { transform:scale(1.04); }
-.pc:nth-child(1) { grid-row:1/3; }
+.pc:nth-child(1) { grid-row:1/3; min-height:500px; }
 .pc-overlay {
   position:absolute; inset:0;
   background:linear-gradient(to top,rgba(34,39,37,.65) 0%,transparent 55%);
@@ -500,9 +501,9 @@ footer { background:var(--bg-foot); padding:50px 16px 30px; }
   /* nav-mobile-right shown via .nav-mobile-right { display:flex } */
   .hero-spacer { display:none; }
 
-  .photo-grid { grid-template-columns:1fr 1fr; grid-template-rows:auto; gap:8px; }
-  .pc { height:180px; }
-  .pc:nth-child(1) { grid-row:auto; height:220px; }
+  .photo-grid { grid-template-columns:1.4fr 1fr; grid-template-rows:auto; gap:6px; }
+  .pc { aspect-ratio:4/3; height:auto; }
+  .pc:nth-child(1) { grid-row:1/3; aspect-ratio:auto; min-height:280px; }
 
   .about-section { padding:4rem 20px; }
   .about-grid { grid-template-columns:1fr; gap:2rem; }
@@ -1332,15 +1333,22 @@ function animateCounter(el, target, duration) {
   }
 
   // Tracking кои снимки са в момента показани
-  let shownSrcs = new Set(pcs.map(pc => pc.querySelector('img') ? pc.querySelector('img').src : ''));
-  let available = shuffle(pool.filter(p => !shownSrcs.has(p.src)));
+  // Track by filename to avoid Cloudinary URL mismatches
+  function getSrcs() {
+    return new Set(pcs.map(pc => {
+      const img = pc.querySelector('img');
+      return img ? img.src.split('/').pop() : '';
+    }));
+  }
+  let shownFiles = getSrcs();
+  let available = shuffle(pool.filter(p => !shownFiles.has(p.src.split('/').pop())));
   let qi = 0;
 
   function nextPhoto() {
     if (qi >= available.length) {
       // Нова разбъркана опашка — изключваме текущо показаните
-      shownSrcs = new Set(pcs.map(pc => pc.querySelector('img') ? pc.querySelector('img').src : ''));
-      available = shuffle(pool.filter(p => !shownSrcs.has(p.src)));
+      shownFiles = getSrcs();
+      available = shuffle(pool.filter(p => !shownFiles.has(p.src.split('/').pop())));
       qi = 0;
       if (!available.length) { available = shuffle(pool); }
     }
@@ -1350,7 +1358,11 @@ function animateCounter(el, target, duration) {
     // Избираме pc която НЕ показва вече тази снимка
     const targets = pcs.filter(pc => {
       const img = pc.querySelector('img');
-      return img && img.src !== p.src;
+      if (!img) return false;
+      // Compare by filename only (Cloudinary may add version prefix)
+      const currentFile = img.src.split('/').pop();
+      const newFile = p.src.split('/').pop();
+      return currentFile !== newFile;
     });
     if (!targets.length) return;
     const target = targets[Math.floor(Math.random() * targets.length)];
@@ -1367,7 +1379,7 @@ function animateCounter(el, target, duration) {
       if (name) name.textContent = p.name;
       if (tag)  tag.textContent = p.cat;
       target.style.opacity = '1';
-      shownSrcs = new Set(pcs.map(pc => pc.querySelector('img') ? pc.querySelector('img').src : ''));
+      shownFiles = getSrcs();
     }, 500);
   }
 
