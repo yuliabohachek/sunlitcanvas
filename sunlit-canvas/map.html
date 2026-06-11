@@ -531,6 +531,12 @@ const places = [
   { name:"Canabungan Island", country:"Philippines", region:"Asia", lat:8.2500, lng:117.3167, img:"", desc:"A tiny uninhabited island in the Balabac archipelago with crystal-clear waters.", article:"" },
   { name:"Patongong Island", country:"Philippines", region:"Asia", lat:8.1500, lng:117.2167, img:"", desc:"Remote island in the Balabac chain — accessible only by boat from Puerto Princesa.", article:"" },
 
+  /* ── ПОЛША ── */
+  { name:"Warsaw", country:"Poland", region:"Europe", lat:52.2297, lng:21.0122, img:"", desc:"The resilient capital of Poland — rebuilt from rubble, now a vibrant city of culture and history.", article:"" },
+  { name:"Gdańsk", country:"Poland", region:"Europe", lat:54.3520, lng:18.6466, img:"", desc:"A Baltic port city with a storied past — amber, Gothic architecture and the birthplace of Solidarity.", article:"" },
+  { name:"Kraków", country:"Poland", region:"Europe", lat:50.0647, lng:19.9450, img:"", desc:"Poland's royal city — Wawel Castle, the Jewish quarter of Kazimierz and the world's largest medieval market square.", article:"" },
+    { name:"Sopot", country:"Poland", region:"Europe", lat:54.4418, lng:18.5601, img:"", desc:"A charming Baltic resort town — the longest wooden pier in Europe and the bohemian spirit of the Tri-City.", article:"" },
+
 ];
 
 /* ═══════════════════════════════════════════════
@@ -637,6 +643,13 @@ const routes = [
   { from:[8.25,117.3167], to:[8.15,117.2167],   type:"road" },
   { from:[8.25,117.3167], to:[8.1833,117.25],   type:"road" },
   { from:[8.15,117.2167], to:[8.1833,117.25],   type:"road" },
+
+  /* ── Полша маршрут ── */
+  { from:[42.6977,23.3219],   to:[52.2297,21.0122],  type:"flight" },
+  { from:[52.2297,21.0122], to:[54.352,18.6466],  type:"train"  },
+  { from:[54.352,18.6466], to:[50.0647,19.945],  type:"flight" },
+  { from:[50.0647,19.945], to:[42.6977,23.3219],    type:"flight" },
+    { from:[54.352,18.6466], to:[54.4418,18.5601], type:"road" },
 ];
 
 /* ── Инициализация на картата ── */
